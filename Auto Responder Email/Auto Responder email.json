@@ -1,0 +1,2439 @@
+{
+  "name": "Auto Responder- zeba.khan - Step 6[Presently d]",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3200,
+        1200
+      ],
+      "id": "0f758c22-79fd-4f91-8756-b9553338988b",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get email content from the previous node\nconst emailContent = $('Gmail Trigger').first().json.text;  // Ensure 'body' is the correct key$input.first().json.snippet\n\n// Function to remove all HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return \"\";  // Handle cases where content might be empty or null\n\n  return html.replace(/<script[^>]*>[\\s\\S]*?<\\/script>/gi, \"\")  // Remove scripts\n             .replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, \"\")   // Remove styles\n             .replace(/<\\/?[^>]+(>|$)/g, \"\")  // Remove all HTML tags\n             .replace(/\\s+/g, \" \")  // Normalize spaces\n             .trim();  // Trim leading/trailing spaces\n}\n\n// Processed plain text content\nconst cleanedContent = stripHtml(emailContent);\n\nreturn {\n  cleanedContent\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        1168
+      ],
+      "id": "f395f3f8-c67c-4b59-9426-b0be161faed5",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=Analyze the following email and categorize it based on the company's AI Automation Agents business.\n\n**Email Content:**  \n{{ $json.cleanedContent }}\n\n**Output Format:**  \n- **Category:** [Ready to Send Data / More Info Needed / Not Interested / Pending]  \n- **Reason:** [Explain why this category was chosen]  \n\nFollow the company's categorization rules carefully.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=✅ System Prompt for AI Agent & Automation Workflow Company\nYou are an AI assistant for a company that specializes in building AI agents and automation workflows using platforms such as n8n, Make (Integromat), Zapier, CrewAI, and Pydantic-based Python frameworks. The company helps businesses automate repetitive tasks, improve efficiency, and create custom workflow solutions using low-code and AI-driven agents.\n\nYour task is to analyze incoming emails and classify them into one of four categories based on relevance and business intent.\n\n📌 Categorization Rules\n1️⃣ Ready to Send Data ✅\nThe email clearly expresses interest in the company’s AI automation services. The sender:\n\nWants to build, buy, or subscribe to AI agents or automation workflows.\n\nRequests details about platforms used (n8n, Make, Zapier, CrewAI, etc.).\n\nAsks for pricing, project execution, consultation, or integration help.\n\nMentions a specific business problem they want to automate.\n\nInquires about white-label solutions, team automations, or custom bot building.\n\nClearly states interest in using AI agents for lead generation, communication, task automation, etc.\n\n2️⃣ More Info Needed 🔄\nThe email suggests potential interest but lacks clarity for an immediate response. The sender:\n\nAsks general questions about automation, agent capabilities, or platform comparison.\n\nMentions possible interest in working together but does not specify a project or need.\n\nAsks about tech stack, compatibility, or use cases without clear purchase intent.\n\nRequests a discovery call or demo but with vague objectives.\n\nMentions interest in AI or automation, but the use case is not clear yet.\n\n3️⃣ Not Interested ❌\nThe email is not relevant to the company’s business. The sender:\n\nPitches unrelated services (e.g., real estate, influencer marketing, recruitment, etc.).\n\nSends spam, cold outreach, or unrelated promotions.\n\nAsks for partnerships or sponsorships unrelated to automation, AI, or workflow building.\n\nHas no clear automation or tech focus and does not qualify as a customer, partner, or lead.\n\n4️⃣ Pending (Undecidable) ⏳\nThe email may relate to the business but lacks enough information to categorize. The sender:\n\nMentions AI, agents, or automation vaguely without details.\n\nReferences platforms like Zapier, n8n, or Make but without a clear question or request.\n\nUses general curiosity language (e.g., “Tell me more,” “Interested in learning,” etc.) without a project or problem context.\n\nNeeds further clarification to be properly categorized.\n\n✅ Your task:\nCarefully read the provided email content.\n\nIdentify the sender’s intent using the categorization rules above.\n\nReturn the most appropriate category along with a brief explanation.\n\n{\n  \"category\": \"Ready to Send Data / More Info Needed / Not Interested / Pending\",\n  \"reasons\": [\n    \"Reason 1\",\n    \"Reason 2\"\n  ]\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1648,
+        1168
+      ],
+      "id": "3691b8bc-7f55-45a3-b816-094fb3ccd4f4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"category\": {\n      \"type\": \"string\",\n      \"enum\": [\"Ready to Send Data\", \"More Info Needed\", \"Not Interested\", \"Pending\"]\n    },\n    \"reasons\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -1424,
+        1408
+      ],
+      "id": "64ddc472-e727-439e-993b-53abd6b673cb",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ccc6c29a-e1ae-4542-b3a1-276448647c2b",
+              "name": "output.category",
+              "value": "={{ $json.output.category }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1376,
+        1232
+      ],
+      "id": "42ceed5c-042b-4a3f-a167-ca1027108f2f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Edit Fields').item.json.output.category }}",
+                    "rightValue": "Ready to Send Data",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "358447dd-7c8a-4f0c-b917-73eb941f599c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "=Ready to Send Data"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dad77551-445c-4c79-bdc9-4a9318fde985",
+                    "leftValue": "={{ $('Edit Fields').item.json.output.category }}",
+                    "rightValue": "Not Interested",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Interested "
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "92aeec51-a1e8-4d5c-b16f-924a89f01cb6",
+                    "leftValue": "={{ $('Edit Fields').item.json.output.category }}",
+                    "rightValue": "Pending",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pending"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2cd857d5-f2c7-4144-a2f6-bdde59e1fe8c",
+                    "leftValue": "={{ $json.output.category }}",
+                    "rightValue": "More Info Needed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "More Info Needed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1136,
+        1152
+      ],
+      "id": "9b3ba5e7-a433-45aa-a5cc-08192977b83f",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following email and determine the best response based on the data available in the Supabase vector store.\n\ncontent : {{ $('Code').item.json.cleanedContent }}\n\nReturn ONLY valid JSON in the exact format below. Do NOT include extra text, explanations, or formatting.\n\n**Output Format:**  \n```json\n{\n  \"data_found\": true/false,\n  \"response\": \"your response here\"\n}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Analyze the following email and determine the best response using the stored data in the Supabase vector store.\n\n**Instructions:**  \n1. Search Supabase for relevant stored responses that match the email content.\n2. If a relevant response is found, set `\"data_found\": true` and use it to generate a response.\n3. If no relevant data is found, set `\"data_found\": false` and generate a fresh response based on company context.\n\nReturn ONLY valid JSON in the exact format below. Do NOT include extra text, explanations, or formatting.\n\n**Output Format:**  \n```json\n{\n  \"data_found\": true/false,\n  \"response\": \"your response here\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -352,
+        -16
+      ],
+      "id": "443998a2-ccc2-4777-890c-779ecd1fb39c",
+      "name": "AI Agent1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "name": "documents",
+        "description": "=You are an AI assistant that analyzes data retrieved from a Supabase vector store to generate accurate and relevant responses. Your task is to extract the most appropriate information based on the provided data structure and return a well-structured response.  \n\n### **How the Data is Retrieved:**  \n- The data comes from a Supabase vector store, which stores structured objects.  \n- The key fields you will receive are:  \n  - **Content**: The text content that contains the user query or relevant context.  \n  - **Answer**: The predefined answer corresponding to the Content.  \n\n### **Your Task:**  \n1. **Understand the Query:** Extract the `Content` from the retrieved data and determine its intent.  \n2. **Verify the Answer Match:**  \n   - Ensure that the `Answer` field directly corresponds to the given `Content`.  \n   - If the `Answer` does not align with the `Content`, return an appropriate fallback response instead of providing incorrect information.  \n3. **Generate a Clear Response:**  \n   - Use the verified `Answer` field to formulate the response.  \n   - Do **not** generate content beyond what is provided in the `Answer`.  \n   - Ensure the response is **concise, relevant, and accurate**.  \n\n### **Response Guidelines:**  \n- **Strict Matching:** The `Answer` must directly relate to the `Content`. If no relevant answer is found, respond with:  \n  _\"I'm sorry, but I couldn't find the exact information you're looking for. Can you provide more details?\"_  \n- **No Fabrication:** Do not infer or create additional details beyond what is provided in the `Answer`.  \n- **Clarity and Professionalism:** Format the response in a well-structured and professional manner.  \n\n---\n\n### **General Data Structure:**  \n```json\n{\n  \"metadata\": {\n    \"Category\": \"<Category of the inquiry>\",\n    \"blobType\": \"text/plain\",\n    \"Content\": \"<User's question or relevant content>\",\n    \"Answer\": \"<Predefined answer corresponding to the Content it might be include the numerical value>\"\n  }\n}",
+        "topK": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        272
+      ],
+      "id": "c4c176db-89eb-4503-b943-866a275c8313",
+      "name": "Answer questions with a vector store",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    \"content\": \"What types of business processes can your AI automation handle?\",\n    \"metadata\": {\n      \"category\": \"Product Capability\"\n    },\n    \"answer\": \"Our AI automation can handle lead generation, customer support, data entry, invoice processing, follow-ups, and many repetitive workflows across departments.\"\n  },\n  {\n    \"content\": \"Is your automation platform no-code or low-code?\",\n    \"metadata\": {\n      \"category\": \"Product Capability\"\n    },\n    \"answer\": \"We offer both no-code and low-code options, allowing business users and developers alike to customize workflows as needed.\"\n  },\n  {\n    \"content\": \"What industries do you specialize in?\",\n    \"metadata\": {\n      \"category\": \"General Inquiry\"\n    },\n    \"answer\": \"We cater to industries such as eCommerce, real estate, logistics, marketing agencies, manufacturing, and professional services.\"\n  },\n  {\n    \"content\": \"How is your pricing structured?\",\n    \"metadata\": {\n      \"category\": \"Pricing Inquiry\"\n    },\n    \"answer\": \"Pricing is customized based on workflow complexity, number of automations, integrations, and monthly usage. Contact us for a tailored quote.\"\n  },\n  {\n    \"content\": \"Can I get a demo before committing?\",\n    \"metadata\": {\n      \"category\": \"Sales Inquiry\"\n    },\n    \"answer\": \"Yes, we offer free demos and proof-of-concept pilots to showcase how the automation works for your use case.\"\n  },\n  {\n    \"content\": \"How long does it take to set up automation for my business?\",\n    \"metadata\": {\n      \"category\": \"Implementation Timeline\"\n    },\n    \"answer\": \"Basic workflows can be deployed in 2–5 days, while complex solutions may take 2–4 weeks depending on your system and goals.\"\n  },\n  {\n    \"content\": \"What kind of ROI can I expect?\",\n    \"metadata\": {\n      \"category\": \"Value Proposition\"\n    },\n    \"answer\": \"Most clients see a 3x to 10x return on investment within 3–6 months by saving manual hours and improving accuracy.\"\n  },\n  {\n    \"content\": \"Do you offer a free trial?\",\n    \"metadata\": {\n      \"category\": \"Sales Inquiry\"\n    },\n    \"answer\": \"Yes, we offer a limited-time free trial so you can test our platform with real workflows.\"\n  },\n  {\n    \"content\": \"Can the automation integrate with tools like Shopify, HubSpot, or Google Sheets?\",\n    \"metadata\": {\n      \"category\": \"Integration\"\n    },\n    \"answer\": \"Yes, we support 100+ integrations including Shopify, HubSpot, Google Sheets, Notion, Zapier, and more.\"\n  },\n  {\n    \"content\": \"Do you offer custom integrations for niche tools?\",\n    \"metadata\": {\n      \"category\": \"Integration\"\n    },\n    \"answer\": \"Yes, we can build custom API-based integrations for your unique tools or ERP systems.\"\n  },\n  {\n    \"content\": \"Is it secure to run my business workflows through your platform?\",\n    \"metadata\": {\n      \"category\": \"Security\"\n    },\n    \"answer\": \"Yes, we follow strict security protocols with encryption, role-based access, and GDPR-compliant data handling.\"\n  },\n  {\n    \"content\": \"Can I automate WhatsApp or email follow-ups with customers?\",\n    \"metadata\": {\n      \"category\": \"Use Case\"\n    },\n    \"answer\": \"Absolutely. We can set up personalized and automated WhatsApp/email campaigns triggered by customer actions.\"\n  },\n  {\n    \"content\": \"Do I need a developer to manage the platform?\",\n    \"metadata\": {\n      \"category\": \"Technical Requirement\"\n    },\n    \"answer\": \"No developer is needed for basic use. However, complex use cases may benefit from technical support, which we provide.\"\n  },\n  {\n    \"content\": \"How is this different from Zapier, N8N or Make.com?\",\n    \"metadata\": {\n      \"category\": \"Comparison\"\n    },\n    \"answer\": \"We provide deeper customization, human-in-the-loop capability, AI integration, and hands-on support compared to DIY tools.\"\n  },\n  {\n    \"content\": \"What happens if a workflow fails or gets stuck?\",\n    \"metadata\": {\n      \"category\": \"Support\"\n    },\n    \"answer\": \"We provide 24/7 monitoring and alerts. Our team helps you resolve issues quickly with guaranteed uptime.\"\n  },\n  {\n    \"content\": \"Do you support AI agents or chatbots?\",\n    \"metadata\": {\n      \"category\": \"AI Features\"\n    },\n    \"answer\": \"Yes, we build custom AI agents that can chat, schedule, analyze, and respond across platforms.\"\n  },\n  {\n    \"content\": \"Can I scale my automation later as my team grows?\",\n    \"metadata\": {\n      \"category\": \"Scalability\"\n    },\n    \"answer\": \"Yes, the platform is scalable. You can start small and expand to other teams and functions anytime.\"\n  },\n  {\n    \"content\": \"Can I cancel anytime?\",\n    \"metadata\": {\n      \"category\": \"Billing & Subscription\"\n    },\n    \"answer\": \"Yes, we offer monthly and annual plans with the flexibility to cancel or upgrade as needed.\"\n  },\n  {\n    \"content\": \"Do you provide training for my team?\",\n    \"metadata\": {\n      \"category\": \"Onboarding\"\n    },\n    \"answer\": \"Yes, we offer onboarding sessions, video tutorials, and knowledge base access to ensure smooth adoption.\"\n  },\n  {\n    \"content\": \"How much customization is possible?\",\n    \"metadata\": {\n      \"category\": \"Customization\"\n    },\n    \"answer\": \"We offer deep customization – from workflows, triggers, and AI prompts to integration logic and branded dashboards.\"\n  },\n  {\n    \"content\": \"Can you automate invoice generation and emailing?\",\n    \"metadata\": {\n      \"category\": \"Use Case\"\n    },\n    \"answer\": \"Yes, we automate end-to-end invoice workflows, including PDF generation, email delivery, and accounting sync.\"\n  },\n  {\n    \"content\": \"Can I automate my CRM tasks like lead assignment and follow-ups?\",\n    \"metadata\": {\n      \"category\": \"CRM Automation\"\n    },\n    \"answer\": \"Yes, CRM tasks like lead routing, reminders, status updates, and follow-ups can be fully automated.\"\n  },\n  {\n    \"content\": \"Do you store my data?\",\n    \"metadata\": {\n      \"category\": \"Data Handling\"\n    },\n    \"answer\": \"We only store data temporarily during processing, unless otherwise requested. Your data is always encrypted.\"\n  },\n  {\n    \"content\": \"What languages does your AI support?\",\n    \"metadata\": {\n      \"category\": \"Language Capability\"\n    },\n    \"answer\": \"We support over 50+ languages including English, Spanish, French, Hindi, German, and more for both text and voice bots.\"\n  },\n  {\n    \"content\": \"Can I use your automation to scrape data or extract from PDFs?\",\n    \"metadata\": {\n      \"category\": \"Advanced Features\"\n    },\n    \"answer\": \"Yes, we offer intelligent document processing and web scraping solutions based on your compliance needs.\"\n  },\n  {\n    \"content\": \"How do I measure automation success?\",\n    \"metadata\": {\n      \"category\": \"Analytics & Reporting\"\n    },\n    \"answer\": \"You’ll get detailed reports on time saved, error reduction, performance metrics, and ROI dashboards.\"\n  },\n  {\n    \"content\": \"Do you help with setting up WhatsApp Business API?\",\n    \"metadata\": {\n      \"category\": \"Integration\"\n    },\n    \"answer\": \"Yes, we help with WhatsApp Business API setup and integrate it with automated workflows.\"\n  },\n  {\n    \"content\": \"Can I automate product listing across marketplaces?\",\n    \"metadata\": {\n      \"category\": \"eCommerce Automation\"\n    },\n    \"answer\": \"Yes, we can automate listings, pricing updates, and inventory sync across platforms like Amazon, Etsy, and Shopify.\"\n  },\n  {\n    \"content\": \"Do you provide SLA or uptime guarantee?\",\n    \"metadata\": {\n      \"category\": \"Reliability\"\n    },\n    \"answer\": \"Yes, we offer 99.9% uptime SLA on our managed workflows and infrastructure.\"\n  },\n  {\n    \"content\": \"Can I connect to my ERP system?\",\n    \"metadata\": {\n      \"category\": \"Integration\"\n    },\n    \"answer\": \"Yes, we integrate with ERPs like SAP, Zoho, Tally, and Odoo using APIs or middleware.\"\n  },\n  {\n    \"content\": \"Do you help in automating Excel-based reports?\",\n    \"metadata\": {\n      \"category\": \"Productivity Automation\"\n    },\n    \"answer\": \"Yes, we automate report generation, updates, and email dispatch from Excel or Google Sheets.\"\n  },\n  {\n    \"content\": \"How frequently do you update your platform?\",\n    \"metadata\": {\n      \"category\": \"Product Updates\"\n    },\n    \"answer\": \"We roll out new features and improvements every month based on client feedback and roadmap.\"\n  },\n  {\n    \"content\": \"Is your automation GDPR and HIPAA compliant?\",\n    \"metadata\": {\n      \"category\": \"Compliance\"\n    },\n    \"answer\": \"Yes, we follow GDPR and HIPAA guidelines where applicable and provide data processing agreements upon request.\"\n  },\n  {\n    \"content\": \"Can I approve tasks manually in the workflow?\",\n    \"metadata\": {\n      \"category\": \"Human-in-the-loop\"\n    },\n    \"answer\": \"Yes, human approval steps can be added in between any automated flows for validation.\"\n  },\n  {\n    \"content\": \"What is your support model?\",\n    \"metadata\": {\n      \"category\": \"Support\"\n    },\n    \"answer\": \"We offer email, WhatsApp, and dedicated manager support depending on your service level agreement.\"\n  },\n  {\n    \"content\": \"Do you offer white-label options for agencies?\",\n    \"metadata\": {\n      \"category\": \"Partnership\"\n    },\n    \"answer\": \"Yes, white-labeling is available for marketing agencies and partners.\"\n  },\n  {\n    \"content\": \"Can I use this for client onboarding automation?\",\n    \"metadata\": {\n      \"category\": \"Use Case\"\n    },\n    \"answer\": \"Yes, you can automate form collection, document verification, and welcome emails for onboarding.\"\n  },\n  {\n    \"content\": \"Can you build AI tools specifically for my business model?\",\n    \"metadata\": {\n      \"category\": \"Customization\"\n    },\n    \"answer\": \"Yes, we can build bespoke AI agents, dashboards, and tools tailored to your workflows and business.\"\n  },\n  {\n    \"content\": \"Do you support multi-language email responses?\",\n    \"metadata\": {\n      \"category\": \"Communication Automation\"\n    },\n    \"answer\": \"Yes, our AI can draft and send replies in multiple languages based on customer preferences.\"\n  },\n  {\n    \"content\": \"Can I schedule tasks and delays in the flow?\",\n    \"metadata\": {\n      \"category\": \"Workflow Logic\"\n    },\n    \"answer\": \"Yes, you can set conditions, delays, and schedules at any step of the process.\"\n  },\n  {\n    \"content\": \"What’s the minimum contract period?\",\n    \"metadata\": {\n      \"category\": \"Billing & Subscription\"\n    },\n    \"answer\": \"We offer flexible contracts starting from monthly to annual, based on your needs.\"\n  },\n  {\n    \"content\": \"Can I integrate with payment gateways?\",\n    \"metadata\": {\n      \"category\": \"Integration\"\n    },\n    \"answer\": \"Yes, we support Razorpay, Stripe, PayPal and other gateway integrations for automation.\"\n  },\n  {\n    \"content\": \"Do you provide ongoing workflow optimization?\",\n    \"metadata\": {\n      \"category\": \"Service Quality\"\n    },\n    \"answer\": \"Yes, we continuously monitor and optimize your workflows to improve efficiency and accuracy.\"\n  },\n  {\n    \"content\": \"Can AI automation reduce my team's workload?\",\n    \"metadata\": {\n      \"category\": \"Value Proposition\"\n    },\n    \"answer\": \"Yes, automation reduces repetitive work, freeing your team to focus on strategic tasks.\"\n  },\n  {\n    \"content\": \"Do you offer usage analytics?\",\n    \"metadata\": {\n      \"category\": \"Analytics\"\n    },\n    \"answer\": \"Yes, you can view task performance, error logs, usage metrics, and optimization suggestions.\"\n  },\n  {\n    \"content\": \"Do you offer consulting before automation setup?\",\n    \"metadata\": {\n      \"category\": \"Sales Inquiry\"\n    },\n    \"answer\": \"Yes, we offer pre-sales consulting to understand your business needs and suggest the right automation approach.\"\n  },\n  {\n    \"content\": \"How do you ensure the AI is making accurate decisions?\",\n    \"metadata\": {\n      \"category\": \"AI Accuracy\"\n    },\n    \"answer\": \"We use trained models, rules, and human verification (if needed) to ensure AI decisions align with your business logic.\"\n  }\n]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "959f7796-8b58-40ff-bf6b-203d2b21d3bf",
+      "name": "Code2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents2",
+          "mode": "list",
+          "cachedResultName": "documents2"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        384,
+        32
+      ],
+      "id": "a3b92fe7-7006-47c5-aa09-9ed28958100f",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Q4mDPVmvXAI8ufTa",
+          "name": "Ash"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 999,
+        "options": {
+          "splitCode": "markdown"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        640,
+        432
+      ],
+      "id": "21f17948-19f9-4176-9182-40328cb567b8",
+      "name": "Recursive Character Text Splitter",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        320
+      ],
+      "id": "656f1709-31d9-4cb9-9016-b59be9778eff",
+      "name": "Embeddings Google Gemini",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=Content",
+                "value": "={{ $json.content }}"
+              },
+              {
+                "name": "Category",
+                "value": "={{ $json.metadata.category }}"
+              },
+              {
+                "name": "Answer",
+                "value": "={{ $json.answer }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        528,
+        240
+      ],
+      "id": "f59cf679-cb42-4a44-8149-f1a305c3a76a",
+      "name": "Default Data Loader",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        384
+      ],
+      "id": "00fa9798-e549-40e4-b4aa-c45ef4ed19f8",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Q4mDPVmvXAI8ufTa",
+          "name": "Ash"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        608
+      ],
+      "id": "fb32f1f3-5f40-4308-9f19-1ef31e2b3ce0",
+      "name": "Embeddings Google Gemini1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eae5c841-f046-439f-98b8-f799797323fa",
+              "name": "Content",
+              "value": "={{ $('Code').item.json.cleanedContent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -800,
+        112
+      ],
+      "id": "12b902a9-2991-430f-9738-54be3551a5a8",
+      "name": "Edit Fields1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"type\": \"object\",\n    \"properties\": {\n      \"data_found\": {\n        \"type\": \"boolean\"\n      },\n      \"response\": {\n        \"type\": \"string\"\n      }\n    }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        336
+      ],
+      "id": "86f97f97-ad72-453d-9cd5-a28d55e9efb6",
+      "name": "Structured Output Parser1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.data_found }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "5ff95bec-108f-4f34-aa28-842cb9e0331b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Send Mail"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2646e3b4-94db-40f8-927c-8e3c92a63ff1",
+                    "leftValue": "={{ $json.output.data_found }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate Mail"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "272b23cb-1b0a-48a7-9388-cff91b2cc208",
+      "name": "Switch1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "24a74168-9092-42e5-a47f-497de546ab3a",
+              "leftValue": "={{ $json.output.data_found }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "d44fa059-b872-4693-a7f7-3d4a15dc969f",
+      "name": "If",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "labelIds": "={{ $('Gmail Trigger').item.json.labelIds }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -784,
+        1120
+      ],
+      "id": "fd9df284-7c51-4c86-99c0-462aee5162ce",
+      "name": "Gmail1",
+      "webhookId": "2a6dce75-1750-4cd8-9f53-4c4fee3f9eaa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": "={{ $('Gmail Trigger').item.json.labelIds }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -784,
+        1312
+      ],
+      "id": "2abd160f-10f8-4412-ae12-ab59d42e741d",
+      "name": "Gmail2",
+      "webhookId": "87bb7644-6b38-4edc-8c01-784dac1c5c9b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "labelIds": "={{ $('Gmail Trigger').item.json.labelIds }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -928,
+        1008
+      ],
+      "id": "dae7564f-7070-4487-af73-ef2d6266a7a1",
+      "name": "Gmail3",
+      "webhookId": "f1e9e011-1f89-44f8-8e95-cd58168a0fed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        48
+      ],
+      "id": "9d8d9086-1810-4c56-bf91-467909b0573d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a well-structured HTML email response using the given subject and response text.\n\n### Input Details:\n- **Original Email Subject (From User):**  {{ $('Gmail Trigger').item.json.subject }}\n- **Response Text:** {{ $json.output.response }}  \n- **Name :**{{ $('Gmail Trigger').item.json.to.value[0].name }}\n- **Company Name :** Pathvancer\n### **Your Task:**\n1. **Generate a new, appropriate email subject** that reflects the response content and makes the email engaging.  \n   - Avoid repeating the original subject verbatim.  \n   - The subject should be **concise, relevant, and professional**.  \n   - If the response is a follow-up, prefix it with `\"Re: \"` while making it more meaningful.  \n\n2. **Format the email response professionally in HTML**:\n   - Use the new subject in `<h2>` or `<h3>`.  \n   - Add a **friendly greeting** at the start and a **polite closing** at the end. \n   - greeting should contain the sender name\n   - Do not genrate any subject for mail\n   - Use **bold text for key details**, proper paragraphs, and line breaks for readability.  \n   - Ensure the response is **mobile-friendly and email-compatible**.\n\n3. **You have to use the below signature for email\n    Tanu\n    Pathvancer\n\n### **Return Format (Very Important!)**  \nReturn only a valid JSON object, without markdown, code blocks, or extra formatting.\nEnsure the response is a plain JSON object like this:\n\n{\n  \"formatted_response\": \"<Complete HTML email excluding subject>\"\n}\n\n- Do NOT wrap the JSON in triple backticks (```).\n- Do NOT return additional text or explanations.\n- Ensure `formatted_response` contains only a valid HTML string.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI email formatter specializing in crafting professional HTML email responses.\n\n### **Your Task:**  \n- Convert the provided text response into **a well-structured, email-friendly HTML format**.  \n- Ensure the response is **clear, visually appealing, and well-organized**.  \n- Use **proper HTML tags** like `<h1>`, `<h2>`, `<p>`, `<strong>`, and `<br>` for better readability.  \n- The email should start with a **friendly greeting**, followed by the response, and end with a **polite closing**.  \n- greeting should contain the sender name\n- Do not genrate any subject for mail\n- Format important details **(pricing, product names, key information) in bold**.  \n- Ensure the response is **concise, properly spaced, and mobile-friendly**.  \n\n### **Return Format (Very Important!)**  \nReturn only a valid JSON object, without markdown, code blocks, or extra formatting.\nEnsure the response is a plain JSON object like this:\n\n{\n  \"formatted_response\": \"<Complete HTML email excluding subject>\"\n}\n\n- Do NOT wrap the JSON in triple backticks (```).\n- Do NOT return additional text or explanations.\n- Ensure `formatted_response` contains only a valid HTML string.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        432,
+        -128
+      ],
+      "id": "4ac90c58-c92d-4a98-82cf-8a12b31d0127",
+      "name": "AI Agent2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"response\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        48
+      ],
+      "id": "a61c36ff-7ccb-41a2-aed5-599895d90fcb",
+      "name": "Structured Output Parser3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        208
+      ],
+      "id": "52c7f497-0e8c-47f2-8f94-1d9c8bece2f2",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a persuasive and professional email response to engage the customer when no direct answer is available in the Supabase vector store.\n\n### **Input Details:**\n- **Original Email Subject (From User):** {{ $('Wait').item.json.subject }}\n- **Original Email Content:** {{ $('Code').item.json.cleanedContent }}\n- **AI Suggested Response:** {{ $json.output.response }}\n- **Name :**{{ $('Wait').item.json.to.value[0].name }}\n- **Company Name :** Pathvancer\n- **Company Details:**  company that specializes in building AI agents and automation workflows using platforms such as n8n, Make (Integromat), Zapier, CrewAI, and Pydantic-based Python frameworks. The company helps businesses automate repetitive tasks, improve efficiency, and create custom workflow solutions using low-code and AI-driven agents\n\n### **Your Task:**\n1. **Acknowledge the customer's query** politely and professionally.\n2. **Provide assurance** that the team is actively looking into their request.\n3. **Keep the customer engaged** by offering helpful information related to their query.\n4. **Highlight the company’s expertise** and solutions relevant to their needs.\n5. **Encourage the customer to wait** while ensuring they feel valued.\n- greeting should contain the sender name\n- Do not genrate any subject for mail\n. **You have to use the below signature for email\n   Tanu\n   Pathvancer\n    A-97, Shalimar Garden Main Shahibabad, Ghaziabad, UP, India\n\n### **Return Format (Very Important!)**\nReturn only valid JSON in the exact format below. Do NOT include extra text, explanations, or formatting.\n\n```json\n{\n  \"formatted_response\": \"<HTML formatted email response>\"\n}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\n---\n\n### **System Prompt (Guiding the AI Model)**:  \n```plaintext\nYou are a professional AI email assistant specializing in customer engagement and persuasion. Your task is to generate a convincing, well-structured, and polite response when no immediate answer is found in the company's database.\n\n### **Instructions:**\n1. **Start with a warm greeting** that acknowledges the customer's email and shows appreciation.\n2. **Reassure them that the team is working on their request** and will follow up soon.\n- greeting should contain the sender name\n- Do not genrate any subject for mail\n3. **Make the email engaging** by sharing relevant information about the company’s expertise, services, or related solutions.\n4. **Use persuasive language** to keep the customer interested while they wait for a final response.\n5. **End with a professional and friendly closing**, encouraging them to reach out if needed.\n\n### **Email Formatting:**\n- Use proper HTML tags for structure and readability.\n- Ensure the response is mobile-friendly and visually appealing.\n- Highlight important details using **bold text**.\n\n### **Output Format:**\nReturn a JSON object with:\n- **formatted_response**: The complete HTML-formatted email (excluding the subject).\n\nDo NOT include extra text, explanations, or formatting outside the JSON structure.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1024,
+        432
+      ],
+      "id": "0d01708b-81c3-44c9-95e0-0cbc6b98c017",
+      "name": "AI Agent3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"response\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        464
+      ],
+      "id": "ff998f13-f289-41c4-96c6-04de29b97207",
+      "name": "Structured Output Parser4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        640
+      ],
+      "id": "13821f4a-a19c-4407-9381-e18c3b03f710",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following email and generate a response to request clarification while providing relevant information from the company knowledge base.\n\n**Email Subject:**  \n{{ $('Gmail Trigger').item.json.headers.subject }}\n\n**Email Content:**  \n{{ $('Code').item.json.cleanedContent }}\n\n**Name : **\n{{ $('Gmail Trigger').item.json.from.value[0].name }}\n\n**Company Name**\nPathvancer\n**Response Requirements:**\n- First, ask the sender for clarification based on missing or vague details.\n- Retrieve the top 3 most relevant answers from the vector store and summarize them.\n- Provide a brief company introduction, emphasizing our AI Automation Agents.\n- Ensure the email maintains a professional and engaging tone.\n- Format the response as **a properly structured HTML email** with headings, paragraphs, and bullet points for readability.\n- greeting should contain the sender name\n- Do not genrate any subject for mail\n\n**Output Format:**\n- **Response (HTML):** [Properly formatted HTML email response]\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=✅ System Prompt for AI Agent & Workflow Automation Company\nYou are an AI assistant for a company that specializes in AI agents and workflow automation. The company builds intelligent automation systems using platforms like n8n, Make, Zapier, CrewAI, N8N and Pydantic-based Python frameworks. The company focuses on helping businesses streamline operations, automate repetitive tasks, and improve productivity through smart agents and tailored automations.\n\nYour task is to generate a professional, well-structured HTML email response when an incoming email lacks enough clarity for an immediate answer. Follow these structured steps:\n\n📌 Steps to Follow\n1️⃣ Clarification Request\nIdentify missing or unclear details from the sender’s message.\n\nPolitely ask for more specific information (e.g., \"Could you specify which platform you're using?\" or \"Can you share the use case you want to automate?\").\n\n2️⃣ Retrieve Relevant Information\nQuery the vector store for the top 3 most relevant answers related to the sender’s inquiry.\n\nSummarize key points from these retrieved answers to provide useful context, such as popular platforms used, types of workflows automated, or typical setup times.\n\n3️⃣ Company Information\nInclude a brief introduction about the company, highlighting its AI agent development and workflow automation services.\n\nEmphasize its use of tools like n8n, Make, Zapier, CrewAI, and custom Python-based automation.\n\nMention related services based on the sender’s inquiry (e.g., CRM automation, lead generation bots, email workflows, etc.).\n\n4️⃣ Professional & Engaging Tone\nEnsure the response is warm, professional, and reflects the brand’s technical expertise and problem-solving approach.\n\nUse clear, concise language while remaining helpful and friendly.\n\nBegin with a greeting that includes the sender’s name.\n\nDo not generate any subject line for the email.\n\n5️⃣ Format Response in Proper HTML\nUse <h1>, <h2>, <p>, <ul>, <li>, <strong> for structure and readability.\n\nKeep it visually appealing but compatible with all standard email clients.\n\n📩 Email Signature (Use this exactly):\n\nTanu \nPathvancer  \nA-97, Shalimar Garden Main Shahibabad, Ghaziabad, UP, India  \n\nResponse Format (Strict JSON Only)\nOnly return a JSON object in the following format without extra text:\n\n{\n  \"response\": \"Generated email response in HTML\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -624,
+        2672
+      ],
+      "id": "556f0e84-3557-49e4-b828-7b6c76da3534",
+      "name": "AI Agent4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"response\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -912,
+        2864
+      ],
+      "id": "3d9e1ddb-f6e4-4697-96d8-ba14c4d485c0",
+      "name": "Structured Output Parser5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        2800
+      ],
+      "id": "d7331c44-2346-48de-a313-a4d616194b09",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "name": "documents",
+        "description": "=You are an AI assistant that analyzes data retrieved from a Supabase vector store to generate accurate and relevant responses. Your goal is to extract the most appropriate information from structured data and return a well-formatted response.\n\n---\n\n### **How the Data is Retrieved:**  \n- The data comes from a Supabase vector store, storing structured objects.  \n- The key fields you will receive are:  \n  - **Content**: The original query or context related to the user’s request.  \n  - **Answer**: The predefined response corresponding to the Content.  \n  - **Metadata**: Includes additional details such as the category and blob type.  \n\n---\n\n### **Your Task:**  \n1️⃣ **Understand the Query:**  \n   - Extract the `Content` field to determine the intent of the inquiry.  \n\n2️⃣ **Verify the Answer's Relevance:**  \n   - Ensure that the `Answer` field **directly corresponds** to the provided `Content`.  \n   - If the `Answer` does **not align** with the `Content`, return a fallback response instead of providing incorrect information.  \n\n3️⃣ **Generate a Clear and Structured Response:**  \n   - Use the verified `Answer` to formulate a **concise, relevant, and professional response**.  \n   - **Do NOT generate content beyond what is provided in the `Answer` field.**  \n   - If no relevant answer is found, respond with:  \n     _\"I'm sorry, but I couldn't find the exact information you're looking for. Can you provide more details?\"_  \n\n---\n\n### **Response Formatting:**  \n- **Professional and Clear**: Maintain a structured format using proper headings, paragraphs, and bullet points.  \n- **No Fabrication**: Only return the answer if it matches the query correctly.  \n- **Fallback Handling**: If no valid match is found, provide a polite request for clarification.  \n\n---\n\n### **General Data Structure (Example)**  \n```json\n{\n  \"metadata\": {\n    \"Category\": \"Product Inquiry\",\n    \"blobType\": \"text/plain\",\n    \"Content\": \"What technologies or platforms are used in your AI automation agents?\",\n    \"Answer\": \"Our AI automation agents are built using advanced natural language processing (NLP), machine learning, and RPA technologies. They seamlessly integrate with platforms like CRM, ERP, email, chat, and cloud services to automate workflows, enhance communication, and boost productivity.\"\n  }\n}",
+        "topK": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        3008
+      ],
+      "id": "5906e0f7-4ede-4339-940c-28b8e2e39e0f",
+      "name": "Answer questions with a vector store1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        2704
+      ],
+      "id": "6c547805-a0fe-4e8c-981b-c0b00ddfbb85",
+      "name": "Supabase Vector Store2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Q4mDPVmvXAI8ufTa",
+          "name": "Ash"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        2736
+      ],
+      "id": "57e706f6-722b-4ca5-b2da-ed03fcece16c",
+      "name": "Embeddings Google Gemini2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "labelIds": "={{ $('Gmail Trigger').item.json.labelIds }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1056,
+        1376
+      ],
+      "id": "a86b4ab7-d46e-4d98-80af-386454bddf6a",
+      "name": "Gmail6",
+      "webhookId": "80ee05bc-86c7-4eae-a569-69b99b9d9bb6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "labelIds": "={{ $('Gmail Trigger').item.json.labelIds }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1840,
+        112
+      ],
+      "id": "bbbebdd9-3fc5-49bc-857f-afb42fd6110a",
+      "name": "Gmail7",
+      "webhookId": "59c4fe60-7b19-4076-a101-a4b58135cc4b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1600,
+        1408
+      ],
+      "id": "d4488517-af56-42f1-a9bb-f2fc78f85f03",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        416
+      ],
+      "id": "cf386a0e-342c-402e-a2f7-5216d0784fc0",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        2944
+      ],
+      "id": "fe932fe0-deb3-4dc5-8c3d-f7a77409ea7c",
+      "name": "OpenAI Chat Model6",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.output.response }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1024,
+        -96
+      ],
+      "id": "0f8958a0-8fb8-4df2-9b1f-d7c1581f9276",
+      "name": "Gmail",
+      "webhookId": "a7dc0bb8-de3c-4857-8c02-2a8b1bc3f130",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('AI Agent3').item.json.output.response }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2016,
+        -16
+      ],
+      "id": "e6bd9299-a17a-430a-955e-4eae93d1e3b4",
+      "name": "Gmail4",
+      "webhookId": "b9872790-8177-45fd-922e-87ec0edc0de2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.output.response }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        2832
+      ],
+      "id": "f9444bb9-ae42-4fd6-bcbc-2fb00a88862c",
+      "name": "Gmail5",
+      "webhookId": "9da08da1-79ac-414b-bdb8-654dff495149",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1968,
+        1168
+      ],
+      "id": "af3e851b-a9a2-4549-97fe-efd78a982126",
+      "name": "Gmail8",
+      "webhookId": "ebcc8c9b-f0b2-465e-8539-b9ee277ddb49",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=here,\nmail content: {{ $json.html }}\nmail subject: {{ $json.headers.subject }}\nsender address: {{ $json.to.value[0].address }}\nattachment type: {{ $input.item.binary.attachment_0.mimeType }}",
+        "options": {
+          "systemMessage": "=You are a highly advanced email security filter designed to analyze emails for potential threats such as spam, scams, viruses, and phishing attempts. Your primary goal is to detect malicious and spam emails by thoroughly inspecting email content, sender details, and attachments. Additionally, you will only categorize emails as Valid if they are sent with the clear intention to buy a product from the customer. Out of Office replies will be categorized as Spam and handled appropriately.\n\nDetection Criteria:\nValid Email Criteria\n\nIntent to Purchase:\nThe email explicitly expresses interest in buying a product or service from the customer.\nIncludes clear product/service details, inquiries about pricing, availability, or purchase processes.\nSender Details:\nSender details align with legitimate business or personal email addresses (e.g., no spoofed domains or free suspicious domains).\nOut of Office Reply Detection (Spam)\n\nSpam Indicators:\nCommon phrases in the subject line or content, such as:\n\"Out of Office,\" \"Auto-Reply,\" \"I am currently unavailable,\" or similar variations.\nAutomated language patterns: \"I will respond to your email when I return,\" \"For urgent matters, contact XYZ.\"\nAttachment Inspection (Scam)\n\nScam Indicators:\nAttachments with .zip or .7z formats.\nFiles with double extensions (e.g., invoice.pdf.exe).\nSuspicious file types: .js, .vbs, .html, .docm, .xlsm.\nAbnormally large files with vague descriptions.\nSender Email & Domain Verification (Scam)\n\nScam Indicators:\nSpoofed domains (e.g., subtle changes like @paypa1.com instead of @paypal.com).\nDomains failing SPF/DKIM/DMARC authentication.\nFree or suspicious domains (e.g., @gmail.com, @cheapdomain.xyz).\nSpam Indicators:\nEmails from Google, Alibaba, social media platforms, or advertisement platforms.\nMarketing emails from companies like Walmart or similar.\nSubject Line & Content Analysis (Spam)\n\nSpam Indicators:\nSubject line containing the word \"spam.\"\nGeneric or sensational subject lines (e.g., “Congratulations, You’ve Won,” “Action Required,” “Payment Declined”).\nExcessive capitalization, symbols, or repetitive exclamation marks (e.g., “WIN!!! $$$”).\nUnrelated content to the subject line or irrelevant links/attachments.\nLink Inspection (Scam)\n\nScam Indicators:\nDisguised or shortened links (e.g., bit.ly, tinyurl.com).\nLinks with suspicious domains (e.g., .xyz, .click, .info, .ru).\nIP-based links (e.g., http://123.45.67.89/path).\nContent Red Flags (Scam)\n\nScam Indicators:\nPoor grammar or spelling errors.\nEmbedded scripts or hidden code in attachments.\nRequests for sensitive information (e.g., passwords, banking details, or enabling macros).\nMismatched sender information (e.g., Display Name: \"Amazon Support,\" Email: randomemail@freemail.com).\nBehavioral Indicators (Scam)\n\nScam Indicators:\nReply-to address is different from the sender’s domain.\nUndisclosed recipients or excessive use of BCC.\nFrequent emails from the same sender with slight variations in content or subject line.\nUrgency-Based Language (Scam)\n\nScam Indicators:\nThe email uses language designed to create a sense of urgency, such as:\n\"ASAP,\" \"Immediate response required,\" \"Prompt reply needed,\" or \"Time-sensitive.\"\nThe message tries to rush the recipient into acting quickly, often without time to verify the details or check for legitimacy.\nSender Email & Signature Mismatch (Scam)\n\nScam Indicators:\nThe sender's email ID does not match the signature or other details within the email (e.g., email from a generic address like randomemail@freemail.com, but the signature claims to be from a high-ranking official).\nMismatched information between the sender’s email and the content, creating a discrepancy that suggests fraud.\nCategorization Rules:\nValid Email:\n\nThe email must explicitly indicate the intention to buy a product from the customer.\nSender and content must pass all scam and spam checks.\nAttachments and links, if present, must be relevant and non-malicious.\nSpam:\n\nEmails from Google, Alibaba, social media platforms, or advertisement platforms.\nEmails with \"spam\" in the subject line.\nMarketing emails or promotions.\nMessages with \"Message Delivery Failure\" in the subject line.\nOut of Office replies detected by automated patterns in the subject or body content.\nScam:\n\nAttachments in .zip or .7z formats.\nSuspicious sender domains or spoofed email addresses.\nLinks or content designed to exploit emotions like fear or urgency.\nUrgency-based language or mismatched sender email and signature.\n\n--> this is a valid mail content and any mail that contain semiler content to like this then make them valid\n\nexamples of valid mail\n\n1]\nHi – I’m looking for AI agents like the ones you develop — but customized with additional features for handling multi-language support and CRM integration.\n\nWould this be possible? If I wanted to deploy an agents across two different workflows, could you please share your pricing structure and customization options?\n\nThanks!\n\n2]\nHi,\n\nI’ve tried to deploy two of your AI agents through the platform, but the setup process isn’t going through successfully.\n\nCan you guide me on what to do next?\n\nThanks.\n\n3]\nHi Pathvancer,\n\nI’m interested in purchasing  AI agents for our operations team, with deployment support in our Hong Kong office.\n\nCould you kindly send me a quote including pricing and onboarding details?\n\nThank you.\n--> this is some invalid mail content and any mail that contain semiler content to like this then make them invalid\n\nexamples of invalid mail\n\n1]\nDear provider,\n\nHope all is well?\nI write again regarding our Agent Order. We have not received any response from your end.\nPlease kindly find the attached purchase file and send us your proforma invoice urgently.\n\nOur clients are already experiencing delays.\n\nWe await your immediate reply.\n\nThanks and Best Regards,\nMohammad Ilyas Khan\nCEO & MD | Tamimi Global Co. Ltd.\n(TAFGA GROUP)| Dammam - Saudi Arabia\nTel. +966 (013) 8075780 |\nFax: +966 (013) 8471562\n\n2]\nDear Sir,\n\nPlease find attached our new request for AI agents.\nKindly review the attached document.\nWe need your proforma invoice with company stamp, along with delivery timeline and payment terms.\n\nWaiting for your prompt reply.\n\nBest Regards.\n____________Mr.Rhim Business Manager______________________\n\nTAERHIM GTS CORP.\nH / P : www.taerhim.com\nE-Mail: taerhim@unitel.co.kr\ntaerhim@naver.com\nTEL: 82-2-730-7244\nFAX: 82-2-739-4877\nADDRESS: 7F, KOREA COAL CENTER BLDG, 80-6\nSUSONG-DONG, CHONGRO-KU, SEOUL, KOREA.\n\nmake sure to give status at the start of reply"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -2528,
+        1184
+      ],
+      "id": "a383cf5c-2e43-4fa6-aba8-e902d3fba3d8",
+      "name": "AI Agent6"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2496,
+        1360
+      ],
+      "id": "c237186b-f147-4893-8d43-ed42c9f6e656",
+      "name": "OpenAI Chat Model8",
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "09d2ef4a-97a7-4254-8355-3512c6b61b47",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Valid",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2208,
+        1184
+      ],
+      "id": "886af109-12b6-4e13-9007-7fc83dc8d393",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "efa0bed4-f58c-42e3-971b-054d2378cbcc",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "pathvancer",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2768,
+        1200
+      ],
+      "id": "6f4039ad-ac76-473c-b694-b66a3c9b0105",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "amount": "="
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3024,
+        1200
+      ],
+      "id": "7388c24c-4523-4d48-a7be-f7370570f504",
+      "name": "Wait",
+      "webhookId": "17b5657e-9316-4ce3-91b0-88b44c76b4a6"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": "={{ $('Gmail Trigger').item.json.labelIds }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -2048,
+        1328
+      ],
+      "id": "2d69a191-23a6-42a4-b30e-01cc17535c68",
+      "name": "Gmail9",
+      "webhookId": "41a0bd8d-3a43-4b6b-b025-97f8db0e2af5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        32
+      ],
+      "id": "c8157889-752d-4f98-a252-84f9c8391b4a",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "## {{ Math.floor(Math.random() * 181) + 180}} "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3056,
+        1360
+      ],
+      "typeVersion": 1,
+      "id": "d389412e-d005-4ddf-9aac-7c20cb56a3ef",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -976,
+        848
+      ],
+      "typeVersion": 1,
+      "id": "172fc722-e3e3-4cba-875a-2074010a9307",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "height": 144
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1232,
+        1456
+      ],
+      "typeVersion": 1,
+      "id": "0d93be53-d668-49b2-be50-d5dfb540a965",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// For email workflow - get cleaned email content\nconst rawQuestion = $('Code').item.json.cleanedContent || $json.body?.message || $json.message || '';\n\n\n// Advanced normalization with better handling\nfunction normalizeQuestion(text) {\n  if (!text) return '';\n  \n  return text\n    .toLowerCase()\n    .trim()\n    // Normalize whitespace\n    .replace(/\\s+/g, ' ')\n    // Remove special characters but preserve meaningful punctuation\n    .replace(/[^a-z0-9\\s?!.,'-]/gi, '')\n    // Normalize repeated characters (hiii -> hi, hellooo -> hello)\n    .replace(/(.)\\1{2,}/g, '$1$1')\n    // Remove trailing/leading punctuation\n    .replace(/^[.,?!\\s]+|[.,?!\\s]+$/g, '');\n}\n\n// Extract metadata about the question\nfunction analyzeQuestion(text) {\n  const words = text.split(/\\s+/).filter(w => w.length > 0);\n  const hasQuestionMark = text.includes('?');\n  const startsWithQuestionWord = /^(what|when|where|who|why|how|which|can|could|would|should|is|are|do|does)/i.test(text);\n  \n  return {\n    wordCount: words.length,\n    charCount: text.length,\n    isQuestion: hasQuestionMark || startsWithQuestionWord,\n    questionType: startsWithQuestionWord ? text.split(/\\s+/)[0].toLowerCase() : 'statement'\n  };\n}\n\nconst normalizedQuestion = normalizeQuestion(rawQuestion);\nconst metadata = analyzeQuestion(normalizedQuestion);\n\nreturn {\n  json: {\n    questionweb: rawQuestion,\n    normalized_question: normalizedQuestion,\n    question_length: normalizedQuestion.length,\n    word_count: metadata.wordCount,\n    is_question: metadata.isQuestion,\n    question_type: metadata.questionType,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "181a3d7f-c59e-4247-b681-ccd384bee975",
+      "name": "Extract & Normalize Question",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        1552
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"input\": \"{{ $json.normalized_question }}\",\n  \"model\": \"text-embedding-3-small\"\n}",
+        "options": {}
+      },
+      "id": "2bbb4bfd-3b59-4509-a7c1-a5ab392d06d9",
+      "name": "Generate User Embedding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -720,
+        1568
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "store-question",
+              "name": "user_question",
+              "value": "={{ $('Extract & Normalize Question').item.json.questionweb }}",
+              "type": "string"
+            },
+            {
+              "id": "store-normalized",
+              "name": "normalized_question",
+              "value": "={{ $('Extract & Normalize Question').item.json.normalized_question }}",
+              "type": "string"
+            },
+            {
+              "id": "store-embedding",
+              "name": "user_embedding",
+              "value": "={{ $json.data[0].embedding }}",
+              "type": "array"
+            },
+            {
+              "id": "store-metadata",
+              "name": "question_metadata",
+              "value": "={{ { word_count: $('Extract & Normalize Question').item.json.word_count, is_question: $('Extract & Normalize Question').item.json.is_question, question_type: $('Extract & Normalize Question').item.json.question_type } }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "535d7ca2-5cab-438d-80f1-cd8661ecfeca",
+      "name": "Store User Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        1616
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "Question_pathvancer",
+        "returnAll": true
+      },
+      "id": "3b62d115-d235-4d98-8e45-3da3dda1d7db",
+      "name": "Get All Questions",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        1648
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "Q4mDPVmvXAI8ufTa",
+          "name": "Ash"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n\n// ============================================\n// IMPROVED INTENT MATCHING ENGINE v3.0\n// Fixed for consistent results in n8n\n// ============================================\n\n// Get data from previous nodes\nconst userEmbedding = $('Store User Data').item.json.user_embedding;\nconst userQuestion = $('Store User Data').item.json.user_question;\nconst normalizedUserQuestion = $('Store User Data').item.json.normalized_question;\nconst questionMetadata = $('Store User Data').item.json.question_metadata;\n\n// ============================================\n// CONFIGURATION - Adjust these for tuning\n// ============================================\nconst CONFIG = {\n  // Base thresholds\n  EXACT_MATCH_THRESHOLD: 0.95,\n  HIGH_FUZZY_THRESHOLD: 0.80,\n  MEDIUM_FUZZY_THRESHOLD: 0.65,\n  SEMANTIC_BASE_THRESHOLD: 0.50,\n  FALLBACK_THRESHOLD: 0.45,\n  \n  // Score weights\n  SEMANTIC_WEIGHT: 0.50,\n  KEYWORD_WEIGHT: 0.30,\n  FUZZY_WEIGHT: 0.20,\n  \n  // Minimum keyword overlap for short queries\n  MIN_KEYWORD_OVERLAP: 0.4,\n  \n  // Enable debug logging\n  DEBUG: true\n};\n\n// ============================================\n// UTILITY FUNCTIONS\n// ============================================\n\nfunction debugLog(message, data = null) {\n  if (CONFIG.DEBUG) {\n    console.log(`[INTENT MATCHING] ${message}`, data || '');\n  }\n}\n\n// Cosine similarity calculation\nfunction cosineSimilarity(vecA, vecB) {\n  if (!vecA || !vecB || vecA.length !== vecB.length) return 0;\n  \n  let dotProduct = 0, normA = 0, normB = 0;\n  \n  for (let i = 0; i < vecA.length; i++) {\n    dotProduct += vecA[i] * vecB[i];\n    normA += vecA[i] * vecA[i];\n    normB += vecB[i] * vecB[i];\n  }\n  \n  if (normA === 0 || normB === 0) return 0;\n  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));\n}\n\n// Advanced text normalization\nfunction normalizeText(text) {\n  if (!text) return '';\n  return text.toLowerCase().trim()\n    .replace(/\\s+/g, ' ')\n    .replace(/[^a-z0-9\\s?!.,'-]/gi, '')\n    .replace(/(\\.)\\1{2,}/g, '$1$1')\n    .replace(/\\b(please|kindly|could you|can you|would you|tell me|show me|let me know)\\b/gi, '')\n    .replace(/^[.,?!\\s]+|[.,?!\\s]+$/g, '')\n    .trim();\n}\n\n// Enhanced keyword extraction with stemming\nfunction extractKeywords(text) {\n  if (!text) return [];\n  \n  const stopWords = new Set([\n    'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',\n    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should',\n    'could', 'may', 'might', 'must', 'can', 'of', 'in', 'on', 'at', 'to',\n    'for', 'with', 'by', 'from', 'about', 'as', 'into', 'through', 'during',\n    'what', 'when', 'where', 'who', 'why', 'how'\n  ]);\n  \n  const words = text.toLowerCase()\n    .split(/\\s+/)\n    .filter(word => word.length > 2 && !stopWords.has(word) && /[a-z]/.test(word));\n  \n  // Simple stemming\n  return words.map(word => {\n    return word\n      .replace(/ing$/, '')\n      .replace(/ed$/, '')\n      .replace(/s$/, '')\n      .replace(/es$/, '')\n      .replace(/ly$/, '');\n  });\n}\n\n// Improved keyword overlap with better scoring\nfunction keywordOverlapScore(keywords1, keywords2) {\n  if (keywords1.length === 0 || keywords2.length === 0) return 0;\n  \n  const set1 = new Set(keywords1);\n  const set2 = new Set(keywords2);\n  const intersection = new Set([...set1].filter(x => set2.has(x)));\n  \n  // Calculate multiple metrics\n  const jaccard = intersection.size / new Set([...set1, ...set2]).size;\n  const recall = intersection.size / set1.size;\n  const precision = intersection.size / set2.size;\n  \n  // Weighted F1-score approach\n  const f1 = recall > 0 && precision > 0 \n    ? 2 * (precision * recall) / (precision + recall) \n    : 0;\n  \n  return (jaccard * 0.3) + (recall * 0.4) + (f1 * 0.3);\n}\n\n// Levenshtein distance\nfunction levenshteinDistance(str1, str2) {\n  const len1 = str1.length, len2 = str2.length;\n  const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(0));\n  \n  for (let i = 0; i <= len2; i++) matrix[i][0] = i;\n  for (let j = 0; j <= len1; j++) matrix[0][j] = j;\n  \n  for (let i = 1; i <= len2; i++) {\n    for (let j = 1; j <= len1; j++) {\n      const cost = str2[i-1] === str1[j-1] ? 0 : 1;\n      matrix[i][j] = Math.min(\n        matrix[i-1][j] + 1,\n        matrix[i][j-1] + 1,\n        matrix[i-1][j-1] + cost\n      );\n    }\n  }\n  return matrix[len2][len1];\n}\n\nfunction levenshteinSimilarity(str1, str2) {\n  const maxLen = Math.max(str1.length, str2.length);\n  if (maxLen === 0) return 1.0;\n  return 1 - (levenshteinDistance(str1, str2) / maxLen);\n}\n\n// Safe embedding parser\nfunction parseEmbedding(embedding) {\n  if (!embedding) return null;\n  \n  if (Array.isArray(embedding)) return embedding;\n  \n  if (typeof embedding === 'string') {\n    try {\n      const parsed = JSON.parse(embedding);\n      return Array.isArray(parsed) ? parsed : null;\n    } catch (e) {\n      debugLog('Failed to parse embedding', e.message);\n      return null;\n    }\n  }\n  \n  return null;\n}\n\n// ============================================\n// UNIFIED SCORING FUNCTION\n// ============================================\n\nfunction calculateMatchScore(userQuestion, dbQuestion, dbEmbedding, userEmbedding, userKeywords, dbKeywords) {\n  const scores = {\n    exact: 0,\n    fuzzy: 0,\n    keyword: 0,\n    semantic: 0,\n    combined: 0\n  };\n  \n  // 1. Exact match check\n  if (userQuestion === dbQuestion) {\n    scores.exact = 1.0;\n    scores.combined = 1.0;\n    return { scores, matchType: 'exact', confidence: 'high' };\n  }\n  \n  // 2. Fuzzy string matching\n  scores.fuzzy = levenshteinSimilarity(userQuestion, dbQuestion);\n  \n  // 3. Keyword overlap\n  scores.keyword = keywordOverlapScore(userKeywords, dbKeywords);\n  \n  // 4. Semantic embedding similarity\n  const parsedDbEmbedding = parseEmbedding(dbEmbedding);\n  if (parsedDbEmbedding && parsedDbEmbedding.length === userEmbedding.length) {\n    scores.semantic = cosineSimilarity(userEmbedding, parsedDbEmbedding);\n  }\n  \n  // ============================================\n  // SMART COMBINATION LOGIC\n  // ============================================\n  \n  let matchType = 'semantic';\n  let confidence = 'low';\n  \n  // High fuzzy match (>80%) - Trust it\n  if (scores.fuzzy >= CONFIG.HIGH_FUZZY_THRESHOLD) {\n    scores.combined = scores.fuzzy;\n    matchType = 'fuzzy';\n    confidence = 'high';\n  }\n  // Medium fuzzy + good keywords (>65% fuzzy, >40% keywords)\n  else if (scores.fuzzy >= CONFIG.MEDIUM_FUZZY_THRESHOLD && scores.keyword >= CONFIG.MIN_KEYWORD_OVERLAP) {\n    scores.combined = (scores.fuzzy * 0.6) + (scores.keyword * 0.4);\n    matchType = 'fuzzy_keyword';\n    confidence = 'medium';\n  }\n  // Good semantic + good keywords\n  else if (scores.semantic >= 0.60 && scores.keyword >= 0.50) {\n    scores.combined = (scores.semantic * 0.6) + (scores.keyword * 0.4);\n    matchType = 'semantic_keyword';\n    confidence = 'medium';\n  }\n  // Pure semantic (most common case)\n  else if (scores.semantic >= CONFIG.SEMANTIC_BASE_THRESHOLD) {\n    // Apply small keyword boost if available\n    const keywordBoost = scores.keyword > 0.3 ? scores.keyword * 0.10 : 0;\n    scores.combined = Math.min(scores.semantic + keywordBoost, 0.95);\n    matchType = 'semantic';\n    confidence = scores.combined >= 0.70 ? 'high' : scores.combined >= 0.55 ? 'medium' : 'low';\n  }\n  // Fallback: weighted average of all scores\n  else {\n    scores.combined = (\n      scores.semantic * CONFIG.SEMANTIC_WEIGHT +\n      scores.keyword * CONFIG.KEYWORD_WEIGHT +\n      scores.fuzzy * CONFIG.FUZZY_WEIGHT\n    );\n    matchType = 'hybrid';\n    confidence = 'low';\n  }\n  \n  return { scores, matchType, confidence };\n}\n\n// ============================================\n// ADAPTIVE THRESHOLD CALCULATION\n// ============================================\n\nfunction calculateThreshold(normalizedQuestion, metadata) {\n  const wordCount = metadata.word_count || normalizedQuestion.split(/\\s+/).length;\n  const isQuestion = metadata.is_question;\n  \n  let threshold = CONFIG.SEMANTIC_BASE_THRESHOLD;\n  \n  // Adjust based on question length\n  if (wordCount <= 2) {\n    threshold = 0.42; // Very short - lower threshold\n  } else if (wordCount <= 4) {\n    threshold = 0.47;\n  } else if (wordCount <= 7) {\n    threshold = 0.50;\n  } else if (wordCount <= 12) {\n    threshold = 0.53;\n  } else {\n    threshold = 0.56; // Long questions - higher confidence needed\n  }\n  \n  // Slight adjustment for statements vs questions\n  if (!isQuestion) {\n    threshold -= 0.03;\n  }\n  \n  debugLog('Calculated threshold', { wordCount, isQuestion, threshold });\n  return threshold;\n}\n\n// ============================================\n// MAIN MATCHING LOGIC\n// ============================================\n\ndebugLog('Starting intent matching', {\n  userQuestion,\n  normalizedUserQuestion,\n  questionMetadata\n});\n\nconst userKeywords = extractKeywords(normalizedUserQuestion);\nconst allQuestions = $input.all();\nlet matches = [];\n\ndebugLog('Extracted keywords', { userKeywords, totalDBRecords: allQuestions.length });\n\n// Process each database question\nfor (const item of allQuestions) {\n  const dbQuestion = item.json.Questions;\n  const dbAnswer = item.json.Answers || item.json.answer;\n  const dbEmbedding = item.json.embedding;\n  \n  if (!dbQuestion || !dbAnswer) {\n    debugLog('Skipping invalid record', { dbQuestion, dbAnswer });\n    continue;\n  }\n  \n  const normalizedDbQuestion = normalizeText(dbQuestion);\n  const dbKeywords = extractKeywords(normalizedDbQuestion);\n  \n  // Calculate unified score\n  const result = calculateMatchScore(\n    normalizedUserQuestion,\n    normalizedDbQuestion,\n    dbEmbedding,\n    userEmbedding,\n    userKeywords,\n    dbKeywords\n  );\n  \n  const { scores, matchType, confidence } = result;\n  \n  // Only store meaningful matches\n  if (scores.combined > 0.30) {\n    matches.push({\n      question: dbQuestion,\n      answer: dbAnswer,\n      similarity: scores.combined,\n      match_type: matchType,\n      confidence: confidence,\n      score_breakdown: scores,\n      keyword_overlap: userKeywords.filter(k => dbKeywords.includes(k)),\n      db_keywords: dbKeywords\n    });\n  }\n}\n\n// Sort by similarity\nmatches.sort((a, b) => b.similarity - a.similarity);\n\ndebugLog('Matching complete', { \n  totalMatches: matches.length,\n  topScore: matches[0]?.similarity || 0\n});\n\n// ============================================\n// DECISION LOGIC\n// ============================================\n\nconst THRESHOLD = calculateThreshold(normalizedUserQuestion, questionMetadata);\nconst bestMatch = matches[0];\nconst secondBestMatch = matches[1];\n\nconst confidenceGap = bestMatch && secondBestMatch \n  ? bestMatch.similarity - secondBestMatch.similarity \n  : 1.0;\n\n// Enhanced confidence calculation\nlet finalConfidence = 'low';\nif (bestMatch) {\n  if (bestMatch.match_type === 'exact') {\n    finalConfidence = 'high';\n  } else if (bestMatch.similarity >= 0.75 && confidenceGap > 0.15) {\n    finalConfidence = 'high';\n  } else if (bestMatch.similarity >= 0.60 && confidenceGap > 0.10) {\n    finalConfidence = 'medium';\n  } else if (bestMatch.similarity >= THRESHOLD) {\n    finalConfidence = 'medium';\n  }\n}\n\n// ============================================\n// RETURN RESULTS\n// ============================================\n\nif (bestMatch && bestMatch.similarity >= THRESHOLD) {\n  debugLog('Match found!', {\n    similarity: bestMatch.similarity,\n    threshold: THRESHOLD,\n    confidence: finalConfidence\n  });\n  \n  return [{\n    json: {\n      route: 'found',\n      answer: bestMatch.answer,\n      matched_question: bestMatch.question,\n      similarity_score: Math.round(bestMatch.similarity * 100) + '%',\n      match_type: bestMatch.match_type,\n      confidence_level: finalConfidence,\n      confidence_gap: Math.round(confidenceGap * 100) + '%',\n      threshold_used: Math.round(THRESHOLD * 100) + '%',\n      score_breakdown: bestMatch.score_breakdown,\n      keyword_overlap: bestMatch.keyword_overlap,\n      user_question: userQuestion,\n      normalized_question: normalizedUserQuestion,\n      extracted_keywords: userKeywords,\n      total_candidates: matches.length,\n      top_3_matches: matches.slice(0, 3).map(m => ({\n        question: m.question,\n        similarity: Math.round(m.similarity * 100) + '%',\n        type: m.match_type,\n        confidence: m.confidence\n      }))\n    }\n  }];\n} else {\n  debugLog('No match found', {\n    bestScore: bestMatch?.similarity || 0,\n    threshold: THRESHOLD,\n    gap: bestMatch ? (THRESHOLD - bestMatch.similarity) : 'N/A'\n  });\n  \n  return [{\n    json: {\n      route: 'not_found',\n      answer: null,\n      user_question: userQuestion,\n      normalized_question: normalizedUserQuestion,\n      extracted_keywords: userKeywords,\n      best_match: bestMatch ? bestMatch.question : 'none',\n      best_match_score: bestMatch ? Math.round(bestMatch.similarity * 100) + '%' : '0%',\n      best_match_type: bestMatch ? bestMatch.match_type : 'none',\n      threshold_used: Math.round(THRESHOLD * 100) + '%',\n      gap_to_threshold: bestMatch ? Math.round((THRESHOLD - bestMatch.similarity) * 100) + '%' : 'N/A',\n      total_candidates: matches.length,\n      top_5_matches: matches.slice(0, 5).map(m => ({\n        question: m.question,\n        similarity: Math.round(m.similarity * 100) + '%',\n        type: m.match_type,\n        confidence: m.confidence,\n        score_breakdown: m.score_breakdown\n      })),\n      suggestion: bestMatch && bestMatch.similarity >= (THRESHOLD - 0.08) \n        ? `Close match (${Math.round(bestMatch.similarity * 100)}%): \"${bestMatch.question}\"`\n        : 'No close matches found. This appears to be a new question.'\n    }\n  }];\n}"
+      },
+      "id": "6d26a041-da5b-4dfe-904d-271db5ea9343",
+      "name": "Enhanced Intent Matching",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "condition-found",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "found",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Answer Found"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "condition-not-found",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "not_found",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Found"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "751039aa-6172-4626-a5c2-20c4c8a2d025",
+      "name": "Route Decision",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        128,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "final-answer",
+              "name": "message",
+              "value": "={{ $json.answer }}",
+              "type": "string"
+            },
+            {
+              "id": "metadata",
+              "name": "metadata",
+              "value": "={{ { similarity: $json.similarity_score, match_type: $json.match_type, confidence: $json.confidence_level, matched_question: $json.matched_question } }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d98c2e23-3a25-4d70-9047-097d6e4811fa",
+      "name": "Format Answer from DB",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        1584
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// For email workflow - get cleaned email content\nconst rawQuestion = $('Code').item.json.cleanedContent || $json.body?.message || $json.message || '';\n\n// Advanced normalization with better handling\nfunction normalizeQuestion(text) {\n  if (!text) return '';\n  \n  return text\n    .toLowerCase()\n    .trim()\n    // Normalize whitespace\n    .replace(/\\s+/g, ' ')\n    // Remove special characters but preserve meaningful punctuation\n    .replace(/[^a-z0-9\\s?!.,'-]/gi, '')\n    // Normalize repeated characters (hiii -> hi, hellooo -> hello)\n    .replace(/(.)\\1{2,}/g, '$1$1')\n    // Remove trailing/leading punctuation\n    .replace(/^[.,?!\\s]+|[.,?!\\s]+$/g, '');\n}\n\n// Extract metadata about the question\nfunction analyzeQuestion(text) {\n  const words = text.split(/\\s+/).filter(w => w.length > 0);\n  const hasQuestionMark = text.includes('?');\n  const startsWithQuestionWord = /^(what|when|where|who|why|how|which|can|could|would|should|is|are|do|does)/i.test(text);\n  \n  return {\n    wordCount: words.length,\n    charCount: text.length,\n    isQuestion: hasQuestionMark || startsWithQuestionWord,\n    questionType: startsWithQuestionWord ? text.split(/\\s+/)[0].toLowerCase() : 'statement'\n  };\n}\n\nconst normalizedQuestion = normalizeQuestion(rawQuestion);\nconst metadata = analyzeQuestion(normalizedQuestion);\n\nreturn {\n  json: {\n    questionweb: rawQuestion,\n    normalized_question: normalizedQuestion,\n    question_length: normalizedQuestion.length,\n    word_count: metadata.wordCount,\n    is_question: metadata.isQuestion,\n    question_type: metadata.questionType,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "a9a8413b-f203-4179-8127-6b40002debe0",
+      "name": "Extract & Normalize Question1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -704,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"input\": \"{{ $json.normalized_question }}\",\n  \"model\": \"text-embedding-3-small\"\n}",
+        "options": {}
+      },
+      "id": "23fc3259-9190-488e-ba13-6d35f373fe41",
+      "name": "Generate User Embedding1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        976
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "bzNbI5CofyFQGmyr",
+          "name": "Pathvarance company"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "store-question",
+              "name": "user_question",
+              "value": "={{ $('Extract & Normalize Question1').item.json.questionweb }}",
+              "type": "string"
+            },
+            {
+              "id": "store-normalized",
+              "name": "normalized_question",
+              "value": "={{ $('Extract & Normalize Question1').item.json.normalized_question }}",
+              "type": "string"
+            },
+            {
+              "id": "store-embedding",
+              "name": "user_embedding",
+              "value": "={{ $json.data[0].embedding }}",
+              "type": "array"
+            },
+            {
+              "id": "store-metadata",
+              "name": "question_metadata",
+              "value": "={{ { word_count: $('Extract & Normalize Question1').item.json.word_count, is_question: $('Extract & Normalize Question1').item.json.is_question, question_type: $('Extract & Normalize Question1').item.json.question_type } }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "afb8756c-7945-4b23-9ea7-1c35dad5c7f9",
+      "name": "Store User Data1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "Question_pathvancer",
+        "returnAll": true
+      },
+      "id": "70737c04-0227-40ed-9da2-6ee044c85e79",
+      "name": "Get All Questions1",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        992
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "Q4mDPVmvXAI8ufTa",
+          "name": "Ash"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n\n// ============================================\n// IMPROVED INTENT MATCHING ENGINE v3.0\n// Fixed for consistent results in n8n\n// ============================================\n\n// Get data from previous nodes\nconst userEmbedding = $('Store User Data1').item.json.user_embedding;\nconst userQuestion = $('Store User Data1').item.json.user_question;\nconst normalizedUserQuestion = $('Store User Data1').item.json.normalized_question;\nconst questionMetadata = $('Store User Data1').item.json.question_metadata;\n\n// ============================================\n// CONFIGURATION - Adjust these for tuning\n// ============================================\nconst CONFIG = {\n  // Base thresholds\n  EXACT_MATCH_THRESHOLD: 0.95,\n  HIGH_FUZZY_THRESHOLD: 0.80,\n  MEDIUM_FUZZY_THRESHOLD: 0.65,\n  SEMANTIC_BASE_THRESHOLD: 0.50,\n  FALLBACK_THRESHOLD: 0.45,\n  \n  // Score weights\n  SEMANTIC_WEIGHT: 0.50,\n  KEYWORD_WEIGHT: 0.30,\n  FUZZY_WEIGHT: 0.20,\n  \n  // Minimum keyword overlap for short queries\n  MIN_KEYWORD_OVERLAP: 0.4,\n  \n  // Enable debug logging\n  DEBUG: true\n};\n\n// ============================================\n// UTILITY FUNCTIONS\n// ============================================\n\nfunction debugLog(message, data = null) {\n  if (CONFIG.DEBUG) {\n    console.log(`[INTENT MATCHING] ${message}`, data || '');\n  }\n}\n\n// Cosine similarity calculation\nfunction cosineSimilarity(vecA, vecB) {\n  if (!vecA || !vecB || vecA.length !== vecB.length) return 0;\n  \n  let dotProduct = 0, normA = 0, normB = 0;\n  \n  for (let i = 0; i < vecA.length; i++) {\n    dotProduct += vecA[i] * vecB[i];\n    normA += vecA[i] * vecA[i];\n    normB += vecB[i] * vecB[i];\n  }\n  \n  if (normA === 0 || normB === 0) return 0;\n  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));\n}\n\n// Advanced text normalization\nfunction normalizeText(text) {\n  if (!text) return '';\n  return text.toLowerCase().trim()\n    .replace(/\\s+/g, ' ')\n    .replace(/[^a-z0-9\\s?!.,'-]/gi, '')\n    .replace(/(\\.)\\1{2,}/g, '$1$1')\n    .replace(/\\b(please|kindly|could you|can you|would you|tell me|show me|let me know)\\b/gi, '')\n    .replace(/^[.,?!\\s]+|[.,?!\\s]+$/g, '')\n    .trim();\n}\n\n// Enhanced keyword extraction with stemming\nfunction extractKeywords(text) {\n  if (!text) return [];\n  \n  const stopWords = new Set([\n    'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',\n    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should',\n    'could', 'may', 'might', 'must', 'can', 'of', 'in', 'on', 'at', 'to',\n    'for', 'with', 'by', 'from', 'about', 'as', 'into', 'through', 'during',\n    'what', 'when', 'where', 'who', 'why', 'how'\n  ]);\n  \n  const words = text.toLowerCase()\n    .split(/\\s+/)\n    .filter(word => word.length > 2 && !stopWords.has(word) && /[a-z]/.test(word));\n  \n  // Simple stemming\n  return words.map(word => {\n    return word\n      .replace(/ing$/, '')\n      .replace(/ed$/, '')\n      .replace(/s$/, '')\n      .replace(/es$/, '')\n      .replace(/ly$/, '');\n  });\n}\n\n// Improved keyword overlap with better scoring\nfunction keywordOverlapScore(keywords1, keywords2) {\n  if (keywords1.length === 0 || keywords2.length === 0) return 0;\n  \n  const set1 = new Set(keywords1);\n  const set2 = new Set(keywords2);\n  const intersection = new Set([...set1].filter(x => set2.has(x)));\n  \n  // Calculate multiple metrics\n  const jaccard = intersection.size / new Set([...set1, ...set2]).size;\n  const recall = intersection.size / set1.size;\n  const precision = intersection.size / set2.size;\n  \n  // Weighted F1-score approach\n  const f1 = recall > 0 && precision > 0 \n    ? 2 * (precision * recall) / (precision + recall) \n    : 0;\n  \n  return (jaccard * 0.3) + (recall * 0.4) + (f1 * 0.3);\n}\n\n// Levenshtein distance\nfunction levenshteinDistance(str1, str2) {\n  const len1 = str1.length, len2 = str2.length;\n  const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(0));\n  \n  for (let i = 0; i <= len2; i++) matrix[i][0] = i;\n  for (let j = 0; j <= len1; j++) matrix[0][j] = j;\n  \n  for (let i = 1; i <= len2; i++) {\n    for (let j = 1; j <= len1; j++) {\n      const cost = str2[i-1] === str1[j-1] ? 0 : 1;\n      matrix[i][j] = Math.min(\n        matrix[i-1][j] + 1,\n        matrix[i][j-1] + 1,\n        matrix[i-1][j-1] + cost\n      );\n    }\n  }\n  return matrix[len2][len1];\n}\n\nfunction levenshteinSimilarity(str1, str2) {\n  const maxLen = Math.max(str1.length, str2.length);\n  if (maxLen === 0) return 1.0;\n  return 1 - (levenshteinDistance(str1, str2) / maxLen);\n}\n\n// Safe embedding parser\nfunction parseEmbedding(embedding) {\n  if (!embedding) return null;\n  \n  if (Array.isArray(embedding)) return embedding;\n  \n  if (typeof embedding === 'string') {\n    try {\n      const parsed = JSON.parse(embedding);\n      return Array.isArray(parsed) ? parsed : null;\n    } catch (e) {\n      debugLog('Failed to parse embedding', e.message);\n      return null;\n    }\n  }\n  \n  return null;\n}\n\n// ============================================\n// UNIFIED SCORING FUNCTION\n// ============================================\n\nfunction calculateMatchScore(userQuestion, dbQuestion, dbEmbedding, userEmbedding, userKeywords, dbKeywords) {\n  const scores = {\n    exact: 0,\n    fuzzy: 0,\n    keyword: 0,\n    semantic: 0,\n    combined: 0\n  };\n  \n  // 1. Exact match check\n  if (userQuestion === dbQuestion) {\n    scores.exact = 1.0;\n    scores.combined = 1.0;\n    return { scores, matchType: 'exact', confidence: 'high' };\n  }\n  \n  // 2. Fuzzy string matching\n  scores.fuzzy = levenshteinSimilarity(userQuestion, dbQuestion);\n  \n  // 3. Keyword overlap\n  scores.keyword = keywordOverlapScore(userKeywords, dbKeywords);\n  \n  // 4. Semantic embedding similarity\n  const parsedDbEmbedding = parseEmbedding(dbEmbedding);\n  if (parsedDbEmbedding && parsedDbEmbedding.length === userEmbedding.length) {\n    scores.semantic = cosineSimilarity(userEmbedding, parsedDbEmbedding);\n  }\n  \n  // ============================================\n  // SMART COMBINATION LOGIC\n  // ============================================\n  \n  let matchType = 'semantic';\n  let confidence = 'low';\n  \n  // High fuzzy match (>80%) - Trust it\n  if (scores.fuzzy >= CONFIG.HIGH_FUZZY_THRESHOLD) {\n    scores.combined = scores.fuzzy;\n    matchType = 'fuzzy';\n    confidence = 'high';\n  }\n  // Medium fuzzy + good keywords (>65% fuzzy, >40% keywords)\n  else if (scores.fuzzy >= CONFIG.MEDIUM_FUZZY_THRESHOLD && scores.keyword >= CONFIG.MIN_KEYWORD_OVERLAP) {\n    scores.combined = (scores.fuzzy * 0.6) + (scores.keyword * 0.4);\n    matchType = 'fuzzy_keyword';\n    confidence = 'medium';\n  }\n  // Good semantic + good keywords\n  else if (scores.semantic >= 0.60 && scores.keyword >= 0.50) {\n    scores.combined = (scores.semantic * 0.6) + (scores.keyword * 0.4);\n    matchType = 'semantic_keyword';\n    confidence = 'medium';\n  }\n  // Pure semantic (most common case)\n  else if (scores.semantic >= CONFIG.SEMANTIC_BASE_THRESHOLD) {\n    // Apply small keyword boost if available\n    const keywordBoost = scores.keyword > 0.3 ? scores.keyword * 0.10 : 0;\n    scores.combined = Math.min(scores.semantic + keywordBoost, 0.95);\n    matchType = 'semantic';\n    confidence = scores.combined >= 0.70 ? 'high' : scores.combined >= 0.55 ? 'medium' : 'low';\n  }\n  // Fallback: weighted average of all scores\n  else {\n    scores.combined = (\n      scores.semantic * CONFIG.SEMANTIC_WEIGHT +\n      scores.keyword * CONFIG.KEYWORD_WEIGHT +\n      scores.fuzzy * CONFIG.FUZZY_WEIGHT\n    );\n    matchType = 'hybrid';\n    confidence = 'low';\n  }\n  \n  return { scores, matchType, confidence };\n}\n\n// ============================================\n// ADAPTIVE THRESHOLD CALCULATION\n// ============================================\n\nfunction calculateThreshold(normalizedQuestion, metadata) {\n  const wordCount = metadata.word_count || normalizedQuestion.split(/\\s+/).length;\n  const isQuestion = metadata.is_question;\n  \n  let threshold = CONFIG.SEMANTIC_BASE_THRESHOLD;\n  \n  // Adjust based on question length\n  if (wordCount <= 2) {\n    threshold = 0.42; // Very short - lower threshold\n  } else if (wordCount <= 4) {\n    threshold = 0.47;\n  } else if (wordCount <= 7) {\n    threshold = 0.50;\n  } else if (wordCount <= 12) {\n    threshold = 0.53;\n  } else {\n    threshold = 0.56; // Long questions - higher confidence needed\n  }\n  \n  // Slight adjustment for statements vs questions\n  if (!isQuestion) {\n    threshold -= 0.03;\n  }\n  \n  debugLog('Calculated threshold', { wordCount, isQuestion, threshold });\n  return threshold;\n}\n\n// ============================================\n// MAIN MATCHING LOGIC\n// ============================================\n\ndebugLog('Starting intent matching', {\n  userQuestion,\n  normalizedUserQuestion,\n  questionMetadata\n});\n\nconst userKeywords = extractKeywords(normalizedUserQuestion);\nconst allQuestions = $input.all();\nlet matches = [];\n\ndebugLog('Extracted keywords', { userKeywords, totalDBRecords: allQuestions.length });\n\n// Process each database question\nfor (const item of allQuestions) {\n  const dbQuestion = item.json.Questions;\n  const dbAnswer = item.json.Answers || item.json.answer;\n  const dbEmbedding = item.json.embedding;\n  \n  if (!dbQuestion || !dbAnswer) {\n    debugLog('Skipping invalid record', { dbQuestion, dbAnswer });\n    continue;\n  }\n  \n  const normalizedDbQuestion = normalizeText(dbQuestion);\n  const dbKeywords = extractKeywords(normalizedDbQuestion);\n  \n  // Calculate unified score\n  const result = calculateMatchScore(\n    normalizedUserQuestion,\n    normalizedDbQuestion,\n    dbEmbedding,\n    userEmbedding,\n    userKeywords,\n    dbKeywords\n  );\n  \n  const { scores, matchType, confidence } = result;\n  \n  // Only store meaningful matches\n  if (scores.combined > 0.30) {\n    matches.push({\n      question: dbQuestion,\n      answer: dbAnswer,\n      similarity: scores.combined,\n      match_type: matchType,\n      confidence: confidence,\n      score_breakdown: scores,\n      keyword_overlap: userKeywords.filter(k => dbKeywords.includes(k)),\n      db_keywords: dbKeywords\n    });\n  }\n}\n\n// Sort by similarity\nmatches.sort((a, b) => b.similarity - a.similarity);\n\ndebugLog('Matching complete', { \n  totalMatches: matches.length,\n  topScore: matches[0]?.similarity || 0\n});\n\n// ============================================\n// DECISION LOGIC\n// ============================================\n\nconst THRESHOLD = calculateThreshold(normalizedUserQuestion, questionMetadata);\nconst bestMatch = matches[0];\nconst secondBestMatch = matches[1];\n\nconst confidenceGap = bestMatch && secondBestMatch \n  ? bestMatch.similarity - secondBestMatch.similarity \n  : 1.0;\n\n// Enhanced confidence calculation\nlet finalConfidence = 'low';\nif (bestMatch) {\n  if (bestMatch.match_type === 'exact') {\n    finalConfidence = 'high';\n  } else if (bestMatch.similarity >= 0.75 && confidenceGap > 0.15) {\n    finalConfidence = 'high';\n  } else if (bestMatch.similarity >= 0.60 && confidenceGap > 0.10) {\n    finalConfidence = 'medium';\n  } else if (bestMatch.similarity >= THRESHOLD) {\n    finalConfidence = 'medium';\n  }\n}\n\n// ============================================\n// RETURN RESULTS\n// ============================================\n\nif (bestMatch && bestMatch.similarity >= THRESHOLD) {\n  debugLog('Match found!', {\n    similarity: bestMatch.similarity,\n    threshold: THRESHOLD,\n    confidence: finalConfidence\n  });\n  \n  return [{\n    json: {\n      route: 'found',\n      answer: bestMatch.answer,\n      matched_question: bestMatch.question,\n      similarity_score: Math.round(bestMatch.similarity * 100) + '%',\n      match_type: bestMatch.match_type,\n      confidence_level: finalConfidence,\n      confidence_gap: Math.round(confidenceGap * 100) + '%',\n      threshold_used: Math.round(THRESHOLD * 100) + '%',\n      score_breakdown: bestMatch.score_breakdown,\n      keyword_overlap: bestMatch.keyword_overlap,\n      user_question: userQuestion,\n      normalized_question: normalizedUserQuestion,\n      extracted_keywords: userKeywords,\n      total_candidates: matches.length,\n      top_3_matches: matches.slice(0, 3).map(m => ({\n        question: m.question,\n        similarity: Math.round(m.similarity * 100) + '%',\n        type: m.match_type,\n        confidence: m.confidence\n      }))\n    }\n  }];\n} else {\n  debugLog('No match found', {\n    bestScore: bestMatch?.similarity || 0,\n    threshold: THRESHOLD,\n    gap: bestMatch ? (THRESHOLD - bestMatch.similarity) : 'N/A'\n  });\n  \n  return [{\n    json: {\n      route: 'not_found',\n      answer: null,\n      user_question: userQuestion,\n      normalized_question: normalizedUserQuestion,\n      extracted_keywords: userKeywords,\n      best_match: bestMatch ? bestMatch.question : 'none',\n      best_match_score: bestMatch ? Math.round(bestMatch.similarity * 100) + '%' : '0%',\n      best_match_type: bestMatch ? bestMatch.match_type : 'none',\n      threshold_used: Math.round(THRESHOLD * 100) + '%',\n      gap_to_threshold: bestMatch ? Math.round((THRESHOLD - bestMatch.similarity) * 100) + '%' : 'N/A',\n      total_candidates: matches.length,\n      top_5_matches: matches.slice(0, 5).map(m => ({\n        question: m.question,\n        similarity: Math.round(m.similarity * 100) + '%',\n        type: m.match_type,\n        confidence: m.confidence,\n        score_breakdown: m.score_breakdown\n      })),\n      suggestion: bestMatch && bestMatch.similarity >= (THRESHOLD - 0.08) \n        ? `Close match (${Math.round(bestMatch.similarity * 100)}%): \"${bestMatch.question}\"`\n        : 'No close matches found. This appears to be a new question.'\n    }\n  }];\n}"
+      },
+      "id": "30bd3a7a-786d-47b0-ae2b-376fe362e831",
+      "name": "Enhanced Intent Matching1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "condition-found",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "found",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Answer Found"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "condition-not-found",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "not_found",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Not Found"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d45359e2-8f85-45a0-a036-92b5afdf6ca0",
+      "name": "Route Decision1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        432,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "final-answer",
+              "name": "message",
+              "value": "={{ $json.answer }}",
+              "type": "string"
+            },
+            {
+              "id": "metadata",
+              "name": "metadata",
+              "value": "={{ { similarity: $json.similarity_score, match_type: $json.match_type, confidence: $json.confidence_level, matched_question: $json.matched_question } }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0a02ac8a-6b90-4bf5-a274-a13e05710558",
+      "name": "Format Answer from DB1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.from.value[0].address }}",
+        "subject": "Reply",
+        "message": "={{ $('Format Answer from DB1').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        848
+      ],
+      "id": "51cfffa2-a049-4faa-b7ac-612deb9f16e1",
+      "name": "Send a message",
+      "webhookId": "5de91cee-a514-485e-badf-67379248a48e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.from.value[0].address }}",
+        "subject": "Reply",
+        "message": "={{ $('Format Answer from DB').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        1584
+      ],
+      "id": "9f31e2e1-7872-416d-a7a7-4d229ebc8150",
+      "name": "Send a message1",
+      "webhookId": "5de91cee-a514-485e-badf-67379248a48e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y2F7RSNUuntuQYM9",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail3": {
+      "main": [
+        [
+          {
+            "node": "Extract & Normalize Question1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser4": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Gmail7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser5": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store2": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store1",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Gmail5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail6": {
+      "main": [
+        [
+          {
+            "node": "Extract & Normalize Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail7": {
+      "main": [
+        [
+          {
+            "node": "Gmail4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail8": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model8": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent6",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent6": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Gmail8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Normalize Question": {
+      "main": [
+        [
+          {
+            "node": "Generate User Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate User Embedding": {
+      "main": [
+        [
+          {
+            "node": "Store User Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store User Data": {
+      "main": [
+        [
+          {
+            "node": "Get All Questions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Questions": {
+      "main": [
+        [
+          {
+            "node": "Enhanced Intent Matching",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enhanced Intent Matching": {
+      "main": [
+        [
+          {
+            "node": "Route Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Decision": {
+      "main": [
+        [
+          {
+            "node": "Format Answer from DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Answer from DB": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Normalize Question1": {
+      "main": [
+        [
+          {
+            "node": "Generate User Embedding1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate User Embedding1": {
+      "main": [
+        [
+          {
+            "node": "Store User Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store User Data1": {
+      "main": [
+        [
+          {
+            "node": "Get All Questions1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Questions1": {
+      "main": [
+        [
+          {
+            "node": "Enhanced Intent Matching1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enhanced Intent Matching1": {
+      "main": [
+        [
+          {
+            "node": "Route Decision1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Decision1": {
+      "main": [
+        [
+          {
+            "node": "Format Answer from DB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Answer from DB1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "be489c9a-37ff-48b2-897e-87f72f395f57",
+  "meta": {
+    "instanceId": "830cfd3e55f405be9f095e5edc311ffd3e63ee88070e74e36a64ee2a1a9bb45f"
+  },
+  "id": "3LEut1ZZm37jiW7v",
+  "tags": [
+    {
+      "updatedAt": "2026-01-21T05:08:57.435Z",
+      "createdAt": "2026-01-21T05:08:57.435Z",
+      "id": "9P6RuLywslu9py7N",
+      "name": "Linkedin Emails Process"
+    }
+  ]
+}

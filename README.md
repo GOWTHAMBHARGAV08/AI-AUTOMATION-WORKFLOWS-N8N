@@ -16,6 +16,14 @@ Tools for extracting and analyzing LinkedIn profile data.
 An intelligent job search assistant.
 - **Features**: Resume parsing, job matching, smart scoring, and automated email drafting.
 
+### 4. [Auto Responder Email](Auto%20Responder%20Email/README.md)
+AI-powered email categorization and response system.
+- **Features**: Smart intent classification, RAG-based answers, and automated HTML email drafting.
+
+### 5. [Create Video Reels](Create%20Video%20Reels/README.md)
+Automated video generation workflow for products.
+- **Features**: AI image analysis, cinematic prompt generation, and video creation via Kling/Fal.ai.
+
 ## 🚀 Getting Started
 
 1. **Install n8n**: Ensure you have n8n installed and running.

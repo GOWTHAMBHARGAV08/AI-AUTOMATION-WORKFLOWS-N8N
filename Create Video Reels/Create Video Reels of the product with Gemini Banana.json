@@ -1,0 +1,741 @@
+{
+  "name": "Create Video Reels of the product with Gemini Banana",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI Influencer Automation",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "main subject",
+              "fieldLabel": "main subject",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Environment",
+              "fieldLabel": "environment",
+              "requiredField": true
+            },
+            {
+              "fieldName": "outfit",
+              "fieldLabel": "outfit",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Composition",
+              "fieldLabel": "composition",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Lighting",
+              "fieldLabel": "lighting",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Action ",
+              "fieldLabel": "action",
+              "requiredField": true
+            },
+            {
+              "fieldName": "atmosphere",
+              "fieldLabel": "atmosphere",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Image",
+              "fieldLabel": "image",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -192,
+        -48
+      ],
+      "id": "fa937f6b-e85a-4777-9444-6dd349b3294b",
+      "name": "On form submission",
+      "webhookId": "cab19c99-47bb-4d17-8a76-75f2f7f008a8"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "dec046b0-80b0-43a4-8b1a-39887d9b8761",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-robotics-er-1.5-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-robotics-er-1.5-preview"
+        },
+        "text": "=#Overview\nProvide a thorough single-paragraph description of the entire image. Include the main subject, environment, artistic style, and overal Impression or vibe.\nele\nwaVisual Breakdown\n• Primary Focus: Identify the made subject, object, or area of interest.\nEnvironment: Describe the background, setting, or context surrounding the\nsubject.\n• Artistic Medium: Specify the nedlum or style (e.E., product photography, 30\nrender, oil painting, filn photography).\n• Lighting: Describe the lighting type, source, and quality (e.g., natural golden\nhour, studio lights, neon highlights).\nAtmosphere: Describe the mood, feeling, or emotional tone conveyed by the image.\nFraning & Perspective: Describe the composition, camera angle, and subject\nplacement (e.g., centered, eye-level, Low-angle, top-down).\n• Color Scheme: List the dominant colors and overall palette.\n#Text Elements\nIdentify and describe every plece of visible text in the Image. If there is no text, write \"None.\"\nsaText #1\nText: Write the exact wording.\nFont Style: Describe the typography or font type.\nEffects: Note any visual effects applied (e.g., shadow, glow, outline). If\nnone,\nwrite \"None.\"\nColor: Specify the text color.\nPosition: Describe its placement within the image (e.g., center, top-right.\nbottom-left).",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        -48
+      ],
+      "id": "da71a85d-9329-4c00-9b49-6fe503133655",
+      "name": "Analyze an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jGrB0hA7REFL5eyv",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Prompt guidelines for the image:\nMain Subject: {{ $('On form submission').item.json['main subject'] }}\nOutfit: {{ $('On form submission').item.json.outfit }}\nEnvironment: {{ $('On form submission').item.json.Environment }}\nComposition:{{ $('On form submission').item.json.Composition }}\nLighting:{{ $('On form submission').item.json.Lighting }}\nAction:{{ $('On form submission').item.json['Action '] }}\nAtmosphere:{{ $('On form submission').item.json.atmosphere }} "
+            },
+            {
+              "content": "=You are tasked with generating a prompt for an Al inage editor. The system already contains the Original Image prompt. The user will provide a set of guidelines specifying the changes they want in the edited image.\nThese guidelines may cover: Primary Focus, Conposition, Lighting, Artistic Style, Moo Color Palette, Environment, and Text Elements. Some aspects may remain the same as the original image, while others will be updated according to the user's instructions.\nUse the edit guidelines to craft a new prompt that preserves the style and feel of the Original Image prompt.\nYour response nust consist only of tye new image edit prompt. Do not Include any explanations, preamble, or closing text.\noriginal Image prompt:{{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -224,
+        192
+      ],
+      "id": "e8e9993f-a99c-4cc4-8170-e5d202f453d3",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ri1Gb48syJfVB3Wg",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  \"model\": \"openai/gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an AI image prompt editor. Your task is to create a new image generation prompt based on the original image description and the user's edit guidelines. Return ONLY the new prompt, no explanations.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Original Image Description:\\n\" + $('Analyze an image').item.json.content.parts[0].text + \"\\n\\nEdit Guidelines:\\n\" + $json.output[0].content[0] + \"\\n\\nGenerate a complete image generation prompt that incorporates these edits while maintaining the style and feel of the original image.\"\n        },\n        {\n          \"type\": \"image_url\",\n          \"image_url\": {\n            \"url\": $('Upload Image').item.json.url\n          }\n        }\n      ]\n    }\n  ]\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        64,
+        192
+      ],
+      "id": "c6cd088c-37ce-416e-9131-4c7ffc23c421",
+      "name": "HTTP Request2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FvWmG6IIERRBsM7s",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY",
+          "mode": "list",
+          "cachedResultName": "Create Video Reels of the product with Gemini Banana",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "photo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "photos": "={{ $json.url }}"
+          },
+          "matchingColumns": [
+            "photos"
+          ],
+          "schema": [
+            {
+              "id": "photos",
+              "displayName": "photos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        192
+      ],
+      "id": "0c11dab7-ee4b-4fb2-9240-4f7ab3feeaae",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Q4fynV5vRdIkwwA2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Convert the provided image prompt into a highly detailed prompt specifically optimized for image-to-video generation. Image Prompt: {{ $('Message a model').item.json.output[0].content[0].text }}\nFocus on creating a slow, sensual, and intimate scene with minimal and graceful movements, emphasizing elegance and alture.\nEnsure the video highlights the subject's attractiveness and conveys a captivating. seductive atmosphere.\nSubtly enhance Lighting, shadows, and ambient detafts to accentuate curves, expressions, and textures in a natural yet visually stunning way.\nInclude delicate, fluid movements such as hair swaying, gentle shifts in posture, or soft glances, maintaining a languid pace that enhances the sensual nood.\nThe final video should feel immersive and highly polished, evoking sophistication and intimate charm without fast or abrupt motions.\nOutput: only produce the fully optimized video prompt as a single continuous string."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        -80
+      ],
+      "id": "f8097472-a982-4f2e-97f9-267c64d6ca0b",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ri1Gb48syJfVB3Wg",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-robotics-er-1.5-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-robotics-er-1.5-preview"
+        },
+        "text": "=User's prompt:{{ $json.output[0].content[0].text }}\nYou are an expert AT assistant named AT Animation Director.\" Your purpose is to function as a creative partner to a user. You will receive two inputs: 1) a source image and 2) the user's initial creative prompt for animating that image. Your job to analyze both inputs in tandem, harmonize the user's ideas with the visual content of the image, and then elevate the concept into a masterfully detailed, cinematic, and effective prompt for an advanced image-to-video generation model.\n* Core Process\nYour process is to synthesize, refine, and enhance. When you receive the user's prompt and the inage, you will follow this chain of thought:\nDual Input Analysis: Concurrently analyze the two data points:\nThe User's Prompt: Deconstruct the user's text. Identify keywords, desired actions (e-g-, wind blowing,\" \"car deiving\"), nood (e.g., \"peaceful,\" \"epic, \"\"selancholy\"), and any specified styllatic elements (eg., \"Like a shibli movie,\" \"hyperreatistic\").\nThe Source Image: Meticulously analyze the image's content. Identity the prinary subject, secondary elements, environment, lighting, composition, and overall atmosphere. Look for visual detalls that can be used to bring the user's prompt to Life.\nHarmonize & Synthesize: Your primary goal is to honor and build upon the user's creative intent.\nFind the direct connections between the prompt and the image. If the user asks for\n*wind blowing,\" identify hair, clothing, trees, or grass in the inage that can plausibly move.\nTranslate abstract user ideas into concrete visual actions. If the user says \"nake it feel nostalgic,\"you should suggest animations like dust motes floating in a sunbeam.a subtle fila srain effect, or a slom zoom that focuses on a thoughtful expression.\nEnhance, Don't Replace: Use the user's prompt as the core foundation. Your role is to dd Layers of professional, cinematic detall. Suggest specific camera movements, atmospheric effects, and subtle secondary animations that support the user's main idea",
+        "imageUrls": "={{ $('Upload Image1').item.json.url }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1136,
+        -80
+      ],
+      "id": "1f8ca406-3ad1-4778-a342-76bb12e8fa7b",
+      "name": "Analyze an image1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jGrB0hA7REFL5eyv",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/kling-video/v2.6/pro/image-to-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  JSON.stringify({\n    \"prompt\": ($('Analyze an image1').item.json.content.parts[0].text || \"\").substring(0, 2400),\n    \"start_image_url\": $('Upload Image1').item.json.url\n  })\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1344,
+        -80
+      ],
+      "id": "c7bddc8d-8487-42c0-b207-f64e444bb368",
+      "name": "HTTP Request4",
+      "credentials": {
+        "httpMultipleHeadersAuth": {
+          "id": "V9Qj2Wli6DcZLwP9",
+          "name": "Multiple Headers Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "7Br6rThIMt5mYGNH",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        832,
+        176
+      ],
+      "id": "48093121-2015-462e-a54c-bc412c5d5914",
+      "name": "Wait",
+      "webhookId": "29785fb1-812a-4965-b0a4-e7f920498630"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY",
+          "mode": "list",
+          "cachedResultName": "Create Video Reels of the product with Gemini Banana",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 349371752,
+          "mode": "list",
+          "cachedResultName": "video",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY/edit#gid=349371752"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "videos": "={{ $json.video.url }}"
+          },
+          "matchingColumns": [
+            "videos"
+          ],
+          "schema": [
+            {
+              "id": "videos",
+              "displayName": "videos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1216,
+        192
+      ],
+      "id": "fc5e8fcc-7f62-4b4f-a598-71b190d940c6",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Q4fynV5vRdIkwwA2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Here is a the prompt you should convert to a text message: {{ $json.output[0].content[0].text }}"
+            },
+            {
+              "content": "=\"Role: You are a female expert in crafting flirty, playful post description messages.\nYou have a deep understanding of how to write nessages that match the tone and mood of a suggestive inage, designed to grab attention and elicit a strong, positive reaction from ment\n#Task:\nFor each inage prompt provided, create a perfectly tailored fLirty text Bessage that complements the image(No more than 1 short seductive sentence). Your goal is to make it Irresistible and engaging, while staying playful and teasing.\n•Context:\nThe nessage is intended for men we want to entice with our provocative content. It should spark their imagination, make them think of us, and encourage thee to engage with our videos. The tone should be teasing, confident, and fLirtatious, perfectly aligned with the vibe of the inage prompt.\n#Output\nThe output\ndessage\nshould be only one short sentence (never Long)."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        848,
+        544
+      ],
+      "id": "31650100-ca10-479d-a6e4-5800c2dbdb5e",
+      "name": "Message a model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ri1Gb48syJfVB3Wg",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY",
+          "mode": "list",
+          "cachedResultName": "Create Video Reels of the product with Gemini Banana",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 189078507,
+          "mode": "list",
+          "cachedResultName": "description",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Bne4L6WfhmmtbTDJBtrifEVAMyxep8zKru34BljCMjY/edit#gid=189078507"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "description": "={{ $json.output[0].content[0].text }}"
+          },
+          "matchingColumns": [
+            "description"
+          ],
+          "schema": [
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        544
+      ],
+      "id": "58349771-f443-44f7-aeec-5e3a38f16e85",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Q4fynV5vRdIkwwA2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpsbmomyl/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "upload_preset",
+              "value": "video.demo"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        16,
+        -48
+      ],
+      "id": "34fd9a40-b643-4a8c-a36b-6ba122f50dd7",
+      "name": "Upload Image"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpsbmomyl/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "upload_preset",
+              "value": "video.demo"
+            },
+            {
+              "name": "file",
+              "value": "={{ $('Upload Image').item.json.url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        240,
+        192
+      ],
+      "id": "daa67387-9f03-4ff7-b4ba-0114190cbb94",
+      "name": "Upload Image1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1008,
+        192
+      ],
+      "id": "85b83312-8ab8-41ef-b633-447da9a3bc99",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpMultipleHeadersAuth": {
+          "id": "V9Qj2Wli6DcZLwP9",
+          "name": "Multiple Headers Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "7Br6rThIMt5mYGNH",
+          "name": "Header Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Upload Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "fc34f3fa-1db6-4c7f-aff7-92dc467b5668",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e6b4d8973464a76d9425ae52b12c3487e72611f0cfe5514156b0b92a5e23c13d"
+  },
+  "id": "OGNJMYVKiLmuPnFG-_IpS",
+  "tags": []
+}
