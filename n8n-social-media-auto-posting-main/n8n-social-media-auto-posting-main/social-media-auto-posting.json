@@ -1,0 +1,3808 @@
+{
+  "name": "SMPostingCompleted - Zeba - 7 PM AND 10 PM",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": "={{ $json.size.width - Math.floor(Math.random() * 10) + 1 }}",
+        "height": "={{ $json.size.height - Math.floor(Math.random() * 10) + 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        3056
+      ],
+      "id": "9b3adb78-4d9b-4341-a125-cc150e925454",
+      "name": "Edit Image"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://ddnmeggny5.execute-api.us-east-1.amazonaws.com/dev/modify-metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $('Airtable').item.json.ImageLInk }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2656,
+        3056
+      ],
+      "id": "f011b86d-9e9a-4b25-8e03-4987d43d718c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "information"
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        3056
+      ],
+      "id": "fe530f35-6a7e-444e-a61c-ca822c89cba6",
+      "name": "Edit Image1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Instagram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d7b12aaf-40a8-4162-beb0-435d07fb22ce"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9116c881-0857-4ca8-98bd-3803e96425d0",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Facebook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2c77013c-63b9-40c4-87f6-9891b888124f",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Twitter",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "788dbed4-32e9-41c0-ae6b-02365453dfca",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "LinkedIn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "44b37225-c8f0-4f47-86d1-b485d4eb46cd",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Pinterest",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2880,
+        3696
+      ],
+      "id": "ee266c32-a034-4979-b8eb-5501c3d90539",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ \n    json: { \n        socialMedia: [\"Instagram\", \"Facebook\", \"Twitter\", \"LinkedIn\", \"Pinterest\"] \n    } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3552,
+        4896
+      ],
+      "id": "aa16f772-0b77-4bd3-bd4a-f747e2437af9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "socialMedia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3328,
+        4896
+      ],
+      "id": "63981cdd-9efd-4bad-97a4-337c9b94df51",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3104,
+        4896
+      ],
+      "id": "093c5e48-460e-4417-8010-f56e055a05b2",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "base64",
+              "value": "={{ $('HTTP Request20').item.json.url }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -704,
+        3056
+      ],
+      "id": "3606e10a-ff30-440a-aa3a-09b4a71541f9",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI solutions company Pathvancer that designs and deploys custom AI Agents to automate repetitive, operational, and decision-support tasks for businesses across global markets. Your content must reflect real implementation experience, automation maturity, and client-side operational awareness — without branding or promotion.\n\nTASK:\nRewrite the title, caption, AND hashtags for an AI Agent development and automation solutions business. Preserve the original intent and context of the inputs without copying word-to-word. The purpose is to build trust through clarity, system thinking, and real-world automation understanding.\n\nINPUTS:\nOld Title: \"{{ $('Airtable').item.json.Title }}\"\nOld Caption: \"{{ $('Airtable').item.json.Description }}\"\nOld Hashtags: \"{{ $('Airtable').item.json.HashTags }}\"\n\nCONTENT RULES:\n\nLanguage: English only\n\nTone: Professional, human, solution-builder focused\n\nPerspective: AI Agent solution provider (NOT coach, NOT consultant, NOT SaaS marketer)\n\nAudience: Business owners, operations heads, founders, and functional leaders\n\nShort, punchy sentences\n\nDo NOT change the original meaning\n\nDo NOT copy old content word-to-word\n\nDo NOT add any CTA\n\nDo NOT mention any company name, brand name, product name, platform name, person name, website, email, phone number, or link\n\nDo NOT include URLs, domains, or social handles\n\nTitle must be short, hook-driven, curiosity-based\n\nCaption must be emotional + practical + automation-specific\n\nMention real client-side pains (manual workload, repeated follow-ups, slow internal processes, data scattered across tools, human errors, scaling issues, tool overload, trust gaps with automation)\n\nInclude at least one practical AI Agent or workflow automation insight (examples: task orchestration, rule-based vs autonomous agents, integration with existing systems, human-in-the-loop design)\n\nInstagram caption length target: ~350 characters\n\nHASHTAG RULES:\n\nGenerate 4 generic, non-branded hashtags , related to title and caption.\n\nHashtags must support global reach\n\nFocus on AI automation, AI agents, business operations, workflow automation, enterprise efficiency\n\nAvoid brand names, company names, locations, or local-only tags\n\nDo NOT repeat hashtags\n\nFORMATTING RULES (VERY IMPORTANT):\n• Do NOT use real line breaks\n• Use <<LB>> wherever a line break should appear\n• Preserve spacing exactly using <<LB>>\n• Caption MUST include intentional line breaks\n• Structure the caption in this exact flow:\n\nLINE 1–2:\nShort emotional hook (1 line each, max 6–7 words)\n\n<<LB>>\n\nLINE 3–6:\n2–4 short punchy lines\nEach line on a new line\nAI automation reality or operational pain\n\n<<LB>>\n\nPARAGRAPH BLOCK:\nOne compact paragraph (3–4 lines max)\nPractical AI Agent or automation insight\nDelivery-experienced, implementation-grounded tone\n\n<<LB>>\n\nCLOSING LINES:\n2 short lines\nReliability, scalability, or system trust positioning\n\n• Do NOT remove line breaks\n• Do NOT convert into a single paragraph\n• Keep spacing exactly as written\n• Line breaks must remain visible in final output\n\nOUTPUT FORMAT (STRICT):\nReturn ONLY raw JSON\nNo explanation\nNo markdown\nNo extra text\n\nCRITICAL OUTPUT RULE:\nReturn JSON in ONE SINGLE LINE\nDo NOT use \\n\nDo NOT use actual newlines\nUse <<LB>> only\nAll values must be plain text strings\n\nOUTPUT SANITIZATION RULE (CRITICAL):\nDo NOT use \\n or any escaped newline characters\nOutput must be a single continuous line\nOnly allowed line break marker is <<LB>>\nJSON must begin with { and end with } on the same line\n\nFINAL OUTPUT FORMAT (EXACT):\n{\n\"title\": TITLE_TEXT_HERE,\n\"caption\": CAPTION_TEXT_HERE,\n\"hashtags\": HASHTAGS_TEXT_HERE\n}\n\nIMPORTANT:\n• Do NOT use quotation marks inside title, caption, or hashtags values\n• Do NOT break JSON structure\n• Ensure caption is complete and not cut off\n• Finish all sentences cleanly\n• Do not include any external link, platform name, or copyrighted brand reference",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1280,
+        2944
+      ],
+      "id": "94e6ed9c-2172-4d91-9d7d-449823c239fd",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": "={{ $json.size.width - Math.floor(Math.random() * 10) + 1 }}",
+        "height": "={{ $json.size.height - Math.floor(Math.random() * 10) + 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        3344
+      ],
+      "id": "70c275fd-6cf6-4764-8d49-39fcc20cb9da",
+      "name": "Edit Image6"
+    },
+    {
+      "parameters": {
+        "operation": "information"
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        3344
+      ],
+      "id": "548aae8e-28c1-45c4-bb37-09a58adb1633",
+      "name": "Edit Image7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI solutions company Pathvancer that designs and deploys custom AI Agents to automate repetitive, operational, and decision-support tasks for businesses across global markets. Your content must reflect real implementation experience, automation maturity, and client-side operational awareness — without branding or promotion.\n\nTASK:\nRewrite the title, caption, AND hashtags for an AI Agent development and automation solutions business. Preserve the original intent and context of the inputs without copying word-to-word. The purpose is to build trust through clarity, system thinking, and real-world automation understanding.\n\nINPUTS:\nOld Title: \"{{ $('Airtable').item.json.Title }}\"\nOld Caption: \"{{ $('Airtable').item.json.Description }}\"\nOld Hashtags: \"{{ $('Airtable').item.json.HashTags }}\"\n\nCONTENT RULES:\n\nLanguage: English only\n\nTone: Professional, human, solution-builder focused\n\nPerspective: AI Agent solution provider (NOT coach, NOT consultant, NOT SaaS marketer)\n\nAudience: Business owners, operations heads, founders, and functional leaders\n\nShort, punchy sentences\n\nDo NOT change the original meaning\n\nDo NOT copy old content word-to-word\n\nDo NOT add any CTA\n\nDo NOT mention any company name, brand name, product name, platform name, person name, website, email, phone number, or link\n\nDo NOT include URLs, domains, or social handles\n\nTitle must be short, hook-driven, curiosity-based\n\nCaption must be emotional + practical + automation-specific\n\nMention real client-side pains (manual workload, repeated follow-ups, slow internal processes, data scattered across tools, human errors, scaling issues, tool overload, trust gaps with automation)\n\nInclude at least one practical AI Agent or workflow automation insight (examples: task orchestration, rule-based vs autonomous agents, integration with existing systems, human-in-the-loop design)\n\nFacebook caption length target: ~350 characters\n\nHASHTAG RULES:\n\nGenerate 4 generic, non-branded hashtags , related to title and caption.\n\nHashtags must support global reach\n\nFocus on AI automation, AI agents, business operations, workflow automation, enterprise efficiency\n\nAvoid brand names, company names, locations, or local-only tags\n\nDo NOT repeat hashtags\n\nFORMATTING RULES (VERY IMPORTANT):\n• Do NOT use real line breaks\n• Use <<LB>> wherever a line break should appear\n• Preserve spacing exactly using <<LB>>\n• Caption MUST include intentional line breaks\n• Structure the caption in this exact flow:\n\nLINE 1–2:\nShort emotional hook (1 line each, max 6–7 words)\n\n<<LB>>\n\nLINE 3–6:\n2–4 short punchy lines\nEach line on a new line\nAI automation reality or operational pain\n\n<<LB>>\n\nPARAGRAPH BLOCK:\nOne compact paragraph (3–4 lines max)\nPractical AI Agent or automation insight\nDelivery-experienced, implementation-grounded tone\n\n<<LB>>\n\nCLOSING LINES:\n2 short lines\nReliability, scalability, or system trust positioning\n\n• Do NOT remove line breaks\n• Do NOT convert into a single paragraph\n• Keep spacing exactly as written\n• Line breaks must remain visible in final output\n\nOUTPUT FORMAT (STRICT):\nReturn ONLY raw JSON\nNo explanation\nNo markdown\nNo extra text\n\nCRITICAL OUTPUT RULE:\nReturn JSON in ONE SINGLE LINE\nDo NOT use \\n\nDo NOT use actual newlines\nUse <<LB>> only\nAll values must be plain text strings\n\nOUTPUT SANITIZATION RULE (CRITICAL):\nDo NOT use \\n or any escaped newline characters\nOutput must be a single continuous line\nOnly allowed line break marker is <<LB>>\nJSON must begin with { and end with } on the same line\n\nFINAL OUTPUT FORMAT (EXACT):\n{\n\"title\": TITLE_TEXT_HERE,\n\"caption\": CAPTION_TEXT_HERE,\n\"hashtags\": HASHTAGS_TEXT_HERE\n}\n\nIMPORTANT:\n• Do NOT use quotation marks inside title, caption, or hashtags values\n• Do NOT break JSON structure\n• Ensure caption is complete and not cut off\n• Finish all sentences cleanly\n• Do not include any external link, platform name, or copyrighted brand reference",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1632,
+        3248
+      ],
+      "id": "d677a960-51c0-4ad8-bdc4-bed40e62abd0",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": "={{ $json.size.width - Math.floor(Math.random() * 10) + 1 }}",
+        "height": "={{ $json.size.height - Math.floor(Math.random() * 10) + 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        3744
+      ],
+      "id": "93541260-2cce-4161-ac35-06a8a00a18f0",
+      "name": "Edit Image8"
+    },
+    {
+      "parameters": {
+        "operation": "information"
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        3744
+      ],
+      "id": "a7c54884-4f72-4ce7-aa65-b616b9ae5202",
+      "name": "Edit Image9"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI solutions company Pathvancer that designs and deploys custom AI Agents to automate repetitive, operational, and decision-support tasks for businesses across global markets. Your content must reflect real implementation experience, automation maturity, and client-side operational awareness — without branding or promotion.\n\nTASK:\nRewrite the title, caption, AND hashtags for an AI Agent development and automation solutions business. Preserve the original intent and context of the inputs without copying word-to-word. The purpose is to build trust through clarity, system thinking, and real-world automation understanding.\n\nINPUTS:\nOld Title: \"{{ $('Airtable').item.json.Title }}\"\nOld Caption: \"{{ $('Airtable').item.json.Description }}\"\nOld Hashtags: \"{{ $('Airtable').item.json.HashTags }}\"\n\nCONTENT RULES:\n\nLanguage: English only\n\nTone: Professional, human, solution-builder focused\n\nPerspective: AI Agent solution provider (NOT coach, NOT consultant, NOT SaaS marketer)\n\nAudience: Business owners, operations heads, founders, and functional leaders\n\nShort, punchy sentences\n\nDo NOT change the original meaning\n\nDo NOT copy old content word-to-word\n\nDo NOT add any CTA\n\nDo NOT mention any company name, brand name, product name, platform name, person name, website, email, phone number, or link\n\nDo NOT include URLs, domains, or social handles\n\nTitle must be short, hook-driven, curiosity-based\n\nCaption must be emotional + practical + automation-specific\n\nMention real client-side pains (manual workload, repeated follow-ups, slow internal processes, data scattered across tools, human errors, scaling issues, tool overload, trust gaps with automation)\n\nInclude at least one practical AI Agent or workflow automation insight (examples: task orchestration, rule-based vs autonomous agents, integration with existing systems, human-in-the-loop design)\n\nTwitter caption length target: ~150 characters\n\nHASHTAG RULES:\n\nGenerate 4 generic, non-branded hashtags , related to title and caption.\n\nHashtags must support global reach\n\nFocus on AI automation, AI agents, business operations, workflow automation, enterprise efficiency\n\nAvoid brand names, company names, locations, or local-only tags\n\nDo NOT repeat hashtags\n\nFORMATTING RULES (VERY IMPORTANT):\n• Do NOT use real line breaks\n• Use <<LB>> wherever a line break should appear\n• Preserve spacing exactly using <<LB>>\n• Caption MUST include intentional line breaks\n• Structure the caption in this exact flow:\n\nLINE 1–2:\nShort emotional hook (1 line each, max 6–7 words)\n\n<<LB>>\n\nLINE 3–6:\n2–4 short punchy lines\nEach line on a new line\nAI automation reality or operational pain\n\n<<LB>>\n\nPARAGRAPH BLOCK:\nOne compact paragraph (3–4 lines max)\nPractical AI Agent or automation insight\nDelivery-experienced, implementation-grounded tone\n\n<<LB>>\n\nCLOSING LINES:\n2 short lines\nReliability, scalability, or system trust positioning\n\n• Do NOT remove line breaks\n• Do NOT convert into a single paragraph\n• Keep spacing exactly as written\n• Line breaks must remain visible in final output\n\nOUTPUT FORMAT (STRICT):\nReturn ONLY raw JSON\nNo explanation\nNo markdown\nNo extra text\n\nCRITICAL OUTPUT RULE:\nReturn JSON in ONE SINGLE LINE\nDo NOT use \\n\nDo NOT use actual newlines\nUse <<LB>> only\nAll values must be plain text strings\n\nOUTPUT SANITIZATION RULE (CRITICAL):\nDo NOT use \\n or any escaped newline characters\nOutput must be a single continuous line\nOnly allowed line break marker is <<LB>>\nJSON must begin with { and end with } on the same line\n\nFINAL OUTPUT FORMAT (EXACT):\n{\n\"title\": TITLE_TEXT_HERE,\n\"caption\": CAPTION_TEXT_HERE,\n\"hashtags\": HASHTAGS_TEXT_HERE\n}\n\nIMPORTANT:\n• Do NOT use quotation marks inside title, caption, or hashtags values\n• Do NOT break JSON structure\n• Ensure caption is complete and not cut off\n• Finish all sentences cleanly\n• Do not include any external link, platform name, or copyrighted brand reference",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1632,
+        3648
+      ],
+      "id": "5e33b9f0-153a-40ce-ba03-1444ce696458",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": "={{ $json.size.width - Math.floor(Math.random() * 10) + 1 }}",
+        "height": "={{ $json.size.height - Math.floor(Math.random() * 10) + 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        4144
+      ],
+      "id": "2e930a7c-113f-4cba-9900-765cba1f6227",
+      "name": "Edit Image10"
+    },
+    {
+      "parameters": {
+        "operation": "information"
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        4144
+      ],
+      "id": "6fe1bfeb-2384-4719-a82c-911cb743ecf0",
+      "name": "Edit Image11"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI solutions company Pathvancer that designs and deploys custom AI Agents to automate repetitive, operational, and decision-support tasks for businesses across global markets. Your content must reflect real implementation experience, automation maturity, and client-side operational awareness — without branding or promotion.\n\nTASK:\nRewrite the title, caption, AND hashtags for an AI Agent development and automation solutions business. Preserve the original intent and context of the inputs without copying word-to-word. The purpose is to build trust through clarity, system thinking, and real-world automation understanding.\n\nINPUTS:\nOld Title: \"{{ $('Airtable').item.json.Title }}\"\nOld Caption: \"{{ $('Airtable').item.json.Description }}\"\nOld Hashtags: \"{{ $('Airtable').item.json.HashTags }}\"\n\nCONTENT RULES:\n\nLanguage: English only\n\nTone: Professional, human, solution-builder focused\n\nPerspective: AI Agent solution provider (NOT coach, NOT consultant, NOT SaaS marketer)\n\nAudience: Business owners, operations heads, founders, and functional leaders\n\nShort, punchy sentences\n\nDo NOT change the original meaning\n\nDo NOT copy old content word-to-word\n\nDo NOT add any CTA\n\nDo NOT mention any company name, brand name, product name, platform name, person name, website, email, phone number, or link\n\nDo NOT include URLs, domains, or social handles\n\nTitle must be short, hook-driven, curiosity-based\n\nCaption must be emotional + practical + automation-specific\n\nMention real client-side pains (manual workload, repeated follow-ups, slow internal processes, data scattered across tools, human errors, scaling issues, tool overload, trust gaps with automation)\n\nInclude at least one practical AI Agent or workflow automation insight (examples: task orchestration, rule-based vs autonomous agents, integration with existing systems, human-in-the-loop design)\n\nLinkedin caption length target: ~350 characters\n\nHASHTAG RULES:\n\nGenerate 4 generic, non-branded hashtags , related to title and caption.\n\nHashtags must support global reach\n\nFocus on AI automation, AI agents, business operations, workflow automation, enterprise efficiency\n\nAvoid brand names, company names, locations, or local-only tags\n\nDo NOT repeat hashtags\n\nFORMATTING RULES (VERY IMPORTANT):\n• Do NOT use real line breaks\n• Use <<LB>> wherever a line break should appear\n• Preserve spacing exactly using <<LB>>\n• Caption MUST include intentional line breaks\n• Structure the caption in this exact flow:\n\nLINE 1–2:\nShort emotional hook (1 line each, max 6–7 words)\n\n<<LB>>\n\nLINE 3–6:\n2–4 short punchy lines\nEach line on a new line\nAI automation reality or operational pain\n\n<<LB>>\n\nPARAGRAPH BLOCK:\nOne compact paragraph (3–4 lines max)\nPractical AI Agent or automation insight\nDelivery-experienced, implementation-grounded tone\n\n<<LB>>\n\nCLOSING LINES:\n2 short lines\nReliability, scalability, or system trust positioning\n\n• Do NOT remove line breaks\n• Do NOT convert into a single paragraph\n• Keep spacing exactly as written\n• Line breaks must remain visible in final output\n\nOUTPUT FORMAT (STRICT):\nReturn ONLY raw JSON\nNo explanation\nNo markdown\nNo extra text\n\nCRITICAL OUTPUT RULE:\nReturn JSON in ONE SINGLE LINE\nDo NOT use \\n\nDo NOT use actual newlines\nUse <<LB>> only\nAll values must be plain text strings\n\nOUTPUT SANITIZATION RULE (CRITICAL):\nDo NOT use \\n or any escaped newline characters\nOutput must be a single continuous line\nOnly allowed line break marker is <<LB>>\nJSON must begin with { and end with } on the same line\n\nFINAL OUTPUT FORMAT (EXACT):\n{\n\"title\": TITLE_TEXT_HERE,\n\"caption\": CAPTION_TEXT_HERE,\n\"hashtags\": HASHTAGS_TEXT_HERE\n}\n\nIMPORTANT:\n• Do NOT use quotation marks inside title, caption, or hashtags values\n• Do NOT break JSON structure\n• Ensure caption is complete and not cut off\n• Finish all sentences cleanly\n• Do not include any external link, platform name, or copyrighted brand reference",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1632,
+        4048
+      ],
+      "id": "01e8043b-105f-4ee6-af48-62e08a2cada8",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": "={{ $json.size.width - Math.floor(Math.random() * 10) + 1 }}",
+        "height": "={{ $json.size.height - Math.floor(Math.random() * 10) + 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        4544
+      ],
+      "id": "e199cdd7-6f90-466e-a97a-e92dd6566c99",
+      "name": "Edit Image12"
+    },
+    {
+      "parameters": {
+        "operation": "information"
+      },
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        4544
+      ],
+      "id": "7d3b9429-2c32-4458-aba9-6002795bc187",
+      "name": "Edit Image13"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an AI solutions company Pathvancer that designs and deploys custom AI Agents to automate repetitive, operational, and decision-support tasks for businesses across global markets. Your content must reflect real implementation experience, automation maturity, and client-side operational awareness — without branding or promotion.\n\nTASK:\nRewrite the title, caption, AND hashtags for an AI Agent development and automation solutions business. Preserve the original intent and context of the inputs without copying word-to-word. The purpose is to build trust through clarity, system thinking, and real-world automation understanding.\n\nINPUTS:\nOld Title: \"{{ $('Airtable').item.json.Title }}\"\nOld Caption: \"{{ $('Airtable').item.json.Description }}\"\nOld Hashtags: \"{{ $('Airtable').item.json.HashTags }}\"\n\nCONTENT RULES:\n\nLanguage: English only\n\nTone: Professional, human, solution-builder focused\n\nPerspective: AI Agent solution provider (NOT coach, NOT consultant, NOT SaaS marketer)\n\nAudience: Business owners, operations heads, founders, and functional leaders\n\nShort, punchy sentences\n\nDo NOT change the original meaning\n\nDo NOT copy old content word-to-word\n\nDo NOT add any CTA\n\nDo NOT mention any company name, brand name, product name, platform name, person name, website, email, phone number, or link\n\nDo NOT include URLs, domains, or social handles\n\nTitle must be short, hook-driven, curiosity-based\n\nCaption must be emotional + practical + automation-specific\n\nMention real client-side pains (manual workload, repeated follow-ups, slow internal processes, data scattered across tools, human errors, scaling issues, tool overload, trust gaps with automation)\n\nInclude at least one practical AI Agent or workflow automation insight (examples: task orchestration, rule-based vs autonomous agents, integration with existing systems, human-in-the-loop design)\n\nPinterest caption length target: ~350 characters\n\nHASHTAG RULES:\n\nGenerate 4 generic, non-branded hashtags , related to title and caption.\n\nHashtags must support global reach\n\nFocus on AI automation, AI agents, business operations, workflow automation, enterprise efficiency\n\nAvoid brand names, company names, locations, or local-only tags\n\nDo NOT repeat hashtags\n\nFORMATTING RULES (VERY IMPORTANT):\n• Do NOT use real line breaks\n• Use <<LB>> wherever a line break should appear\n• Preserve spacing exactly using <<LB>>\n• Caption MUST include intentional line breaks\n• Structure the caption in this exact flow:\n\nLINE 1–2:\nShort emotional hook (1 line each, max 6–7 words)\n\n<<LB>>\n\nLINE 3–6:\n2–4 short punchy lines\nEach line on a new line\nAI automation reality or operational pain\n\n<<LB>>\n\nPARAGRAPH BLOCK:\nOne compact paragraph (3–4 lines max)\nPractical AI Agent or automation insight\nDelivery-experienced, implementation-grounded tone\n\n<<LB>>\n\nCLOSING LINES:\n2 short lines\nReliability, scalability, or system trust positioning\n\n• Do NOT remove line breaks\n• Do NOT convert into a single paragraph\n• Keep spacing exactly as written\n• Line breaks must remain visible in final output\n\nOUTPUT FORMAT (STRICT):\nReturn ONLY raw JSON\nNo explanation\nNo markdown\nNo extra text\n\nCRITICAL OUTPUT RULE:\nReturn JSON in ONE SINGLE LINE\nDo NOT use \\n\nDo NOT use actual newlines\nUse <<LB>> only\nAll values must be plain text strings\n\nOUTPUT SANITIZATION RULE (CRITICAL):\nDo NOT use \\n or any escaped newline characters\nOutput must be a single continuous line\nOnly allowed line break marker is <<LB>>\nJSON must begin with { and end with } on the same line\n\nFINAL OUTPUT FORMAT (EXACT):\n{\n\"title\": TITLE_TEXT_HERE,\n\"caption\": CAPTION_TEXT_HERE,\n\"hashtags\": HASHTAGS_TEXT_HERE\n}\n\nIMPORTANT:\n• Do NOT use quotation marks inside title, caption, or hashtags values\n• Do NOT break JSON structure\n• Ensure caption is complete and not cut off\n• Finish all sentences cleanly\n• Do not include any external link, platform name, or copyrighted brand reference",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1632,
+        4544
+      ],
+      "id": "dcbe7d43-f591-4435-9da1-fa9b2c509927",
+      "name": "AI Agent4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1216,
+        3344
+      ],
+      "id": "353b0ce2-a4bc-44ae-9319-d8a3ec66dcae",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1216,
+        3744
+      ],
+      "id": "7acf35b9-6410-4efb-982e-e26ee484d011",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1216,
+        4144
+      ],
+      "id": "6c2110cb-d2a1-40c2-b402-f994296b9bb5",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1216,
+        4544
+      ],
+      "id": "5f376a4a-e0f6-43f6-85ab-3660a73715b2",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -928,
+        3056
+      ],
+      "id": "117dec0d-62ad-4514-a5b6-d72eff272fe3",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://ddnmeggny5.execute-api.us-east-1.amazonaws.com/dev/modify-metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $('Airtable').item.json.ImageLInk }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2656,
+        3344
+      ],
+      "id": "d17eae43-1965-4907-835c-ad0bd536aaf8",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://ddnmeggny5.execute-api.us-east-1.amazonaws.com/dev/modify-metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $('Airtable').item.json.ImageLInk }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2656,
+        3744
+      ],
+      "id": "4fef9b76-2983-4435-9c8b-ff39a15e2c22",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://ddnmeggny5.execute-api.us-east-1.amazonaws.com/dev/modify-metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $('Airtable').item.json.ImageLInk }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2656,
+        4144
+      ],
+      "id": "bf810cd2-60df-4f02-831d-fef4140ed194",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://ddnmeggny5.execute-api.us-east-1.amazonaws.com/dev/modify-metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $('Airtable').item.json.ImageLInk }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2656,
+        4544
+      ],
+      "id": "3be48d85-9af8-4798-84b7-d7916152e329",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a1f4635-87b0-4df5-8c94-58f9def20a98",
+              "name": "base64",
+              "value": "={{ $input.item.binary.data.data }}",
+              "type": "string"
+            },
+            {
+              "id": "fdf90df7-1c2e-41f5-90b3-11b99ce043c5",
+              "name": "type",
+              "value": "={{ $input.item.binary.data.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        3056
+      ],
+      "id": "eb010ada-4919-41f7-86f8-a7b332260f7a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "base64",
+              "value": "={{ $('Edit Fields1').item.json.base64 }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -928,
+        3344
+      ],
+      "id": "957c2671-4609-424c-939b-d595f583756b",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "base64",
+              "value": "={{ $('Edit Fields2').item.json.base64 }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -928,
+        3744
+      ],
+      "id": "678082f6-9bf7-41e3-9a13-89cf202a3d0d",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "base64",
+              "value": "={{ $('Edit Fields3').item.json.base64 }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -928,
+        4144
+      ],
+      "id": "2b63d028-0eaa-4fea-8701-70d1445c6e0b",
+      "name": "HTTP Request8"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "base64",
+              "value": "={{ $('Edit Fields4').item.json.base64 }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -928,
+        4544
+      ],
+      "id": "2af169a3-33ee-4787-805e-4f270214d497",
+      "name": "HTTP Request9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a1f4635-87b0-4df5-8c94-58f9def20a98",
+              "name": "base64",
+              "value": "={{ $input.item.binary.data.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        3344
+      ],
+      "id": "0eec1c76-b5a2-4acf-a632-2950c3fa2580",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a1f4635-87b0-4df5-8c94-58f9def20a98",
+              "name": "base64",
+              "value": "={{ $input.item.binary.data.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        3744
+      ],
+      "id": "27937642-b70a-422d-9cfc-acaffa5cde44",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a1f4635-87b0-4df5-8c94-58f9def20a98",
+              "name": "base64",
+              "value": "={{ $input.item.binary.data.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        4144
+      ],
+      "id": "f653ba45-b491-456b-b21f-33e909861e42",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a1f4635-87b0-4df5-8c94-58f9def20a98",
+              "name": "base64",
+              "value": "={{ $input.item.binary.data.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        4544
+      ],
+      "id": "cfe9deab-11a8-4db8-be99-a49200586ea9",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://y3cn65fu53.execute-api.us-east-1.amazonaws.com/dev/modify_metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video_url",
+              "value": "={{ $('Airtable').item.json.Videolink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2528,
+        5360
+      ],
+      "id": "71ffb621-c8ad-46db-9fff-88d607a757ae",
+      "name": "HTTP Request10"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Instagram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d7b12aaf-40a8-4162-beb0-435d07fb22ce"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9116c881-0857-4ca8-98bd-3803e96425d0",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Facebook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2c77013c-63b9-40c4-87f6-9891b888124f",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Twitter",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "788dbed4-32e9-41c0-ae6b-02365453dfca",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "LinkedIn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "44b37225-c8f0-4f47-86d1-b485d4eb46cd",
+                    "leftValue": "={{ $json.socialMedia }}",
+                    "rightValue": "Pinterest",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2960,
+        6304
+      ],
+      "id": "dc810aba-af93-4ebd-ac02-989a78d3258d",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ \n    json: { \n        socialMedia: [\"Instagram\", \"Facebook\", \"Twitter\", \"LinkedIn\", \"Pinterest\",\"Thread\"] \n    } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3552,
+        7136
+      ],
+      "id": "972edf76-157a-4a2d-b6f9-892fe2ce1e66",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "socialMedia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3328,
+        7136
+      ],
+      "id": "36b21c03-725a-413a-88e2-abb12ddc37a3",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3104,
+        7136
+      ],
+      "id": "8d28270c-ff77-4ae2-a1d1-0c4b64cc1665",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch1').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Video"
+            },
+            {
+              "name": "videoUrl",
+              "value": "={{ $('HTTP Request10').item.json.modified_url }}"
+            },
+            {
+              "name": "thumbnail",
+              "value": "={{ $('Airtable').item.json.VideoCoverImage }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        5312
+      ],
+      "id": "9628cf08-473f-4df6-b7a3-968aadb1aabe",
+      "name": "HTTP Request11"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a unique and engaging instagram post for PathVancer, a company that provides AI Agent–building solutions. Rewrite and enhance the following inputs into a powerful title and caption:\n\nOld title: {{ $('Airtable').item.json.Title }}\nOld caption: {{ $('Airtable').item.json.Description }}\n\nYour task is to transform the above content into a fresh, high-impact Pinterest post.\n\nRequirements:\n✅ Create a strong, scroll-stopping title inspired by the old title but significantly improved.\n✅ Craft an engaging caption around ~490 characters.\n✅ Start with a compelling hook.\n✅ Use storytelling or insights about the rise of AI agents and intelligent automation.\n✅ Highlight PathVancer’s unique value—how it solves problems, boosts efficiency, or supports modern AI transformation.\n✅ End with a thought-provoking question or conversation starter (e.g., “Where do you see AI agents transforming your workflow?”).\n✅ Maintain a professional yet inspiring tone suitable for Pinterest’s audience.\n✅ Include relevant AI, automation, and tech hashtags.\n❗Do NOT add any links.\n❗Output ONLY the final JSON with no markdown, no explanation, no surrounding text.\n\nJSON output format (strictly this structure):\n{\n  \"title\": \"PLACEHOLDER\",\n  \"caption\": \"PLACEHOLDER\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2304,
+        5264
+      ],
+      "id": "38f9e2f9-cea0-4b3a-bfb1-f6f7d1fc0f70",
+      "name": "AI Agent5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a unique and engaging facebook post for PathVancer, a company that provides AI Agent–building solutions. Rewrite and enhance the following inputs into a powerful title and caption:\n\nOld title: {{ $('Airtable').item.json.Title }}\nOld caption: {{ $('Airtable').item.json.Description }}\n\nYour task is to transform the above content into a fresh, high-impact Pinterest post.\n\nRequirements:\n✅ Create a strong, scroll-stopping title inspired by the old title but significantly improved.\n✅ Craft an engaging caption around ~490 characters.\n✅ Start with a compelling hook.\n✅ Use storytelling or insights about the rise of AI agents and intelligent automation.\n✅ Highlight PathVancer’s unique value—how it solves problems, boosts efficiency, or supports modern AI transformation.\n✅ End with a thought-provoking question or conversation starter (e.g., “Where do you see AI agents transforming your workflow?”).\n✅ Maintain a professional yet inspiring tone suitable for Pinterest’s audience.\n✅ Include relevant AI, automation, and tech hashtags.\n❗Do NOT add any links.\n❗Output ONLY the final JSON with no markdown, no explanation, no surrounding text.\n\nJSON output format (strictly this structure):\n{\n  \"title\": \"PLACEHOLDER\",\n  \"caption\": \"PLACEHOLDER\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2304,
+        5664
+      ],
+      "id": "10a89abe-05e1-4b14-a822-da2a69011a0a",
+      "name": "AI Agent6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a unique and engaging twitter post for PathVancer, a company that provides AI Agent–building solutions. Rewrite and enhance the following inputs into a powerful title and caption:\n\nOld title: {{ $('Airtable').item.json.Title }}\nOld caption: {{ $('Airtable').item.json.Description }}\n\nYour task is to transform the above content into a fresh, high-impact Pinterest post.\n\nRequirements:\n✅ Create a strong, scroll-stopping title inspired by the old title but significantly improved.\n✅ Craft an engaging caption around ~250 characters.\n✅ Start with a compelling hook.\n✅ Use storytelling or insights about the rise of AI agents and intelligent automation.\n✅ Highlight PathVancer’s unique value—how it solves problems, boosts efficiency, or supports modern AI transformation.\n✅ End with a thought-provoking question or conversation starter (e.g., “Where do you see AI agents transforming your workflow?”).\n✅ Maintain a professional yet inspiring tone suitable for Pinterest’s audience.\n✅ Include relevant AI, automation, and tech hashtags.\n❗Do NOT add any links.\n❗Output ONLY the final JSON with no markdown, no explanation, no surrounding text.\n\nJSON output format (strictly this structure):\n{\n  \"title\": \"PLACEHOLDER\",\n  \"caption\": \"PLACEHOLDER\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2304,
+        6064
+      ],
+      "id": "6f078d07-2c9a-4432-8398-3bb73fbed2f9",
+      "name": "AI Agent7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a unique and engaging linkedin post for PathVancer, a company that provides AI Agent–building solutions. Rewrite and enhance the following inputs into a powerful title and caption:\n\nOld title: {{ $('Airtable').item.json.Title }}\nOld caption: {{ $('Airtable').item.json.Description }}\n\nYour task is to transform the above content into a fresh, high-impact Pinterest post.\n\nRequirements:\n✅ Create a strong, scroll-stopping title inspired by the old title but significantly improved.\n✅ Craft an engaging caption around ~490 characters.\n✅ Start with a compelling hook.\n✅ Use storytelling or insights about the rise of AI agents and intelligent automation.\n✅ Highlight PathVancer’s unique value—how it solves problems, boosts efficiency, or supports modern AI transformation.\n✅ End with a thought-provoking question or conversation starter (e.g., “Where do you see AI agents transforming your workflow?”).\n✅ Maintain a professional yet inspiring tone suitable for Pinterest’s audience.\n✅ Include relevant AI, automation, and tech hashtags.\n❗Do NOT add any links.\n❗Output ONLY the final JSON with no markdown, no explanation, no surrounding text.\n\nJSON output format (strictly this structure):\n{\n  \"title\": \"PLACEHOLDER\",\n  \"caption\": \"PLACEHOLDER\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2304,
+        6464
+      ],
+      "id": "14f563bc-0fe1-497a-b65a-c68db4c26c96",
+      "name": "AI Agent8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a unique and engaging pinterest post for PathVancer, a company that provides AI Agent–building solutions. Rewrite and enhance the following inputs into a powerful title and caption:\n\nOld title: {{ $('Airtable').item.json.Title }}\nOld caption: {{ $('Airtable').item.json.Description }}\n\nYour task is to transform the above content into a fresh, high-impact Pinterest post.\n\nRequirements:\n✅ Create a strong, scroll-stopping title inspired by the old title but significantly improved.\n✅ Craft an engaging caption around ~490 characters.\n✅ Start with a compelling hook.\n✅ Use storytelling or insights about the rise of AI agents and intelligent automation.\n✅ Highlight PathVancer’s unique value—how it solves problems, boosts efficiency, or supports modern AI transformation.\n✅ End with a thought-provoking question or conversation starter (e.g., “Where do you see AI agents transforming your workflow?”).\n✅ Maintain a professional yet inspiring tone suitable for Pinterest’s audience.\n✅ Include relevant AI, automation, and tech hashtags.\n❗Do NOT add any links.\n❗Output ONLY the final JSON with no markdown, no explanation, no surrounding text.\n\nJSON output format (strictly this structure):\n{\n  \"title\": \"PLACEHOLDER\",\n  \"caption\": \"PLACEHOLDER\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2304,
+        6960
+      ],
+      "id": "a579cde6-e4b9-4442-9b56-9af77fccce05",
+      "name": "AI Agent9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        5712
+      ],
+      "id": "05a3a1dd-b664-4a10-b69f-3dea7db7629c",
+      "name": "Code7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        6112
+      ],
+      "id": "bbbc6dc1-7117-440d-97cc-8c344fbb3a95",
+      "name": "Code8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        6512
+      ],
+      "id": "65784cf5-a70c-4c8d-8c7f-735cc03a152e",
+      "name": "Code9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        6912
+      ],
+      "id": "f111fe77-b2a3-4811-aa59-ab34fb57cbd4",
+      "name": "Code10"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $input.first().json.output;\n\n// Extract title and caption using regex\nconst titleMatch = jsonString.match(/\"title\":\\s*\"([^\"]+)\"/);\nconst captionMatch = jsonString.match(/\"caption\":\\s*\"([^\"]+)\"/);\n\n// Get values or set to empty string if not found\nconst title = titleMatch ? titleMatch[1] : \"\";\nconst caption = captionMatch ? captionMatch[1] : \"\";\n\nreturn [{ \n  json: { \n    title, \n    caption \n  } \n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        5312
+      ],
+      "id": "dcdf0839-7868-488f-89c6-7730fd20b9c4",
+      "name": "Code11"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://y3cn65fu53.execute-api.us-east-1.amazonaws.com/dev/modify_metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video_url",
+              "value": "={{ $('Airtable').item.json.Videolink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2528,
+        5760
+      ],
+      "id": "97085847-544c-45f1-bff2-911d99cdabc8",
+      "name": "HTTP Request12"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://y3cn65fu53.execute-api.us-east-1.amazonaws.com/dev/modify_metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video_url",
+              "value": "={{ $('Airtable').item.json.Videolink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2528,
+        6160
+      ],
+      "id": "3af955e4-c323-4567-81c5-39ad9e7d0c40",
+      "name": "HTTP Request13"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://y3cn65fu53.execute-api.us-east-1.amazonaws.com/dev/modify_metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video_url",
+              "value": "={{ $('Airtable').item.json.Videolink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2528,
+        6560
+      ],
+      "id": "e3acca1f-2a3a-46a6-9686-0aace8611e5b",
+      "name": "HTTP Request14"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://y3cn65fu53.execute-api.us-east-1.amazonaws.com/dev/modify_metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "video_url",
+              "value": "={{ $('Airtable').item.json.Videolink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2528,
+        6960
+      ],
+      "id": "e9055635-63de-4b8d-8350-c825019f84b5",
+      "name": "HTTP Request15"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "videoUrl",
+              "value": "={{ $('HTTP Request12').item.json.modified_url }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch1').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Video"
+            },
+            {
+              "name": "thumbnail",
+              "value": "={{ $('Airtable').item.json.VideoCoverImage }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        5712
+      ],
+      "id": "b7e5b965-d6eb-4f75-9fd0-7c1fe13289fe",
+      "name": "HTTP Request16"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "videoUrl",
+              "value": "={{ $('HTTP Request13').item.json.modified_url }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch1').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Video"
+            },
+            {
+              "name": "thumbnail",
+              "value": "={{ $('Airtable').item.json.VideoCoverImage }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        6112
+      ],
+      "id": "0794280f-cafd-4e74-a84c-1a5fbdfbbc84",
+      "name": "HTTP Request17"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "videoUrl",
+              "value": "={{ $('HTTP Request14').item.json.modified_url }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch1').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Video"
+            },
+            {
+              "name": "thumbnail",
+              "value": "={{ $('Airtable').item.json.VideoCoverImage }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        6512
+      ],
+      "id": "1543ac54-1f65-430c-b279-de475a737a4e",
+      "name": "HTTP Request18"
+    },
+    {
+      "parameters": {
+        "url": "https://hook.eu2.make.com/fr7iztms2kn28u2j8ivj7e3w3gsh89rh",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "videoUrl",
+              "value": "={{ $('HTTP Request15').item.json.modified_url }}"
+            },
+            {
+              "name": "SM_type",
+              "value": "={{ $('Switch1').item.json.socialMedia }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.caption }}"
+            },
+            {
+              "name": "Type",
+              "value": "Video"
+            },
+            {
+              "name": "thumbnail",
+              "value": "={{ $('Airtable').item.json.VideoCoverImage }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1248,
+        6912
+      ],
+      "id": "af77e2f9-add7-493c-a78b-2bac8bbac5b0",
+      "name": "HTTP Request19"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.istHour }}",
+                    "rightValue": "08",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "41d9336b-b33e-4f28-9749-1490f9355fb8"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c19ef944-4a64-4b69-903b-f2fc8fd357cc",
+                    "leftValue": "={{ $json.istHour }}",
+                    "rightValue": "22",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7df3f57-6a78-4359-b51a-69963238e5f8",
+                    "leftValue": "weekly",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -3824,
+        5888
+      ],
+      "id": "e5ddefdf-eea5-4f4b-ab31-e2cec7612e7b",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const istHour = new Intl.DateTimeFormat(\"en-US\", { \n    timeZone: \"Asia/Kolkata\", \n    hour: \"2-digit\", \n    hour12: false \n}).format(new Date());\n\n// Return as an output object\nreturn [{ istHour }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4000,
+        5888
+      ],
+      "id": "d443747d-ba4b-4278-b100-a77712487185",
+      "name": "Code12"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        3920
+      ],
+      "id": "21b4a6eb-7701-4048-9ba3-5f4960d030d8",
+      "name": "Wait",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        3344
+      ],
+      "id": "75a06e6d-5f6b-49f3-bbcf-7dc44999eb4b",
+      "name": "Wait1",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        7120
+      ],
+      "id": "29827d37-b3b0-4673-bef7-b8461390769e",
+      "name": "Wait2",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        7424
+      ],
+      "id": "48f3fcba-87ef-4283-82ca-534078740d74",
+      "name": "Wait3",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        3744
+      ],
+      "id": "fa251a27-c5dd-4d54-8601-935796bc130d",
+      "name": "Wait4",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        4544
+      ],
+      "id": "23f4a146-91a2-4f1a-8cdb-e823c0346fae",
+      "name": "Wait5",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        4144
+      ],
+      "id": "3118470e-9954-4777-ac46-c0c8879ebefc",
+      "name": "Wait6",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        6528
+      ],
+      "id": "b722573e-d69c-486c-97a0-cb1d57c46812",
+      "name": "Wait8",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        6832
+      ],
+      "id": "bb1611ee-c8b3-4b0e-8b77-92c1fda6f51b",
+      "name": "Wait9",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * 360) + 1 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        6240
+      ],
+      "id": "30ca3893-3188-4890-941a-2751011006a2",
+      "name": "Wait10",
+      "webhookId": "54237515-e1b7-4015-a299-7798676d2e4a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dklwg6m7m/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "=data:{{ $json.type }};base64,{{ $json.base64 }}"
+            },
+            {
+              "name": "api_key",
+              "value": "517722268712743"
+            },
+            {
+              "name": "upload_preset",
+              "value": "n8nforeco"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1568,
+        3056
+      ],
+      "id": "03a5c3fd-5dce-425d-8f39-b1f702a4ba9c",
+      "name": "HTTP Request20"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1216,
+        3168
+      ],
+      "id": "fe8454c6-a14e-47a9-9066-1d8f7392939a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        4768
+      ],
+      "id": "21ff6071-3d03-4518-a6ec-ef634d8cacf0",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        4272
+      ],
+      "id": "972ae21d-9869-413d-9b2e-494c091ca54a",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        3872
+      ],
+      "id": "04b90530-26d6-4533-b8e4-0818dc79c7be",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        3472
+      ],
+      "id": "7dd19eea-a4a9-4d79-8bf3-65be88fa1de5",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2288,
+        5472
+      ],
+      "id": "6b86cc7f-9c88-468b-bf16-28dd0b8f9ecb",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2288,
+        5888
+      ],
+      "id": "a426d328-e712-4ccb-91c4-a424ae90835f",
+      "name": "OpenAI Chat Model6",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2336,
+        6256
+      ],
+      "id": "be1004fe-4384-4206-af8c-803c5fb5f796",
+      "name": "OpenAI Chat Model7",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2304,
+        6624
+      ],
+      "id": "a049baa4-bb8b-429f-8d40-c4a4a88d98ef",
+      "name": "OpenAI Chat Model8",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2320,
+        7152
+      ],
+      "id": "b7d4fc86-2188-4475-82e1-9cd3cd187c75",
+      "name": "OpenAI Chat Model9",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appKb84Pn1PUZz0r4",
+          "mode": "list",
+          "cachedResultName": "SocialMediaPostContent",
+          "cachedResultUrl": "https://airtable.com/appKb84Pn1PUZz0r4"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblb7ZOdRSJKgjoLF",
+          "mode": "list",
+          "cachedResultName": "Imported table AI",
+          "cachedResultUrl": "https://airtable.com/appKb84Pn1PUZz0r4/tblb7ZOdRSJKgjoLF"
+        },
+        "filterByFormula": "{Posting}=\"\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "PostDate"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -4224,
+        5888
+      ],
+      "id": "2b42dd9d-488a-4d1a-a59e-895e24ac7a81",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "fEYvXAYstsPvC9Q0",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "smposting",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -4448,
+        5888
+      ],
+      "id": "d6ee3c6f-f82a-459f-b2da-d45bb0bef2eb",
+      "name": "Webhook",
+      "webhookId": "8499c829-5fc8-418c-bd28-f1bf7a6fe0ed"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "spreadsheetId",
+              "value": "1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "sheetName",
+              "value": "Sheet2",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "statusColumn",
+              "value": "F",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "inProgressValue",
+              "value": "in progress",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "postedValue",
+              "value": "posted",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cccc34e6-e70a-44d8-875a-7738113f4ae7",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3584,
+        8032
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "img1",
+              "value": "={{ $json['img 1 link'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "img2",
+              "value": "={{ $json['img 2 link'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "img3",
+              "value": "={{ $json['img 3 link'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "img4",
+              "value": "={{ $json['img 4 link'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "img5",
+              "value": "={{ $json['img 5 link'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "topic",
+              "value": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "rowNumber",
+              "value": "={{ $json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "db40f79c-429c-4af2-977b-1c2d5c32cc0b",
+      "name": "Extract Row Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2720,
+        8048
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get row(s) in sheet2').item.json['img 1 link'] }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "response": {}
+        }
+      },
+      "id": "9a3753d8-fcab-409e-ad65-aabb6f2bbc9a",
+      "name": "Download Image 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1808,
+        8112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Extract Row Data').item.json.img2 }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "image2"
+            }
+          }
+        }
+      },
+      "id": "64e6fbdc-7ec3-41c3-8217-6576439f63f7",
+      "name": "Download Image 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1584,
+        8112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Extract Row Data').item.json.img3 }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "image3"
+            }
+          }
+        }
+      },
+      "id": "2f2421b8-6a34-45d5-9b59-bb1459cfcd5e",
+      "name": "Download Image 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1360,
+        8112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Extract Row Data').item.json.img4 }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "image4"
+            }
+          }
+        }
+      },
+      "id": "81d859dd-1933-4423-8d70-1a57b501717f",
+      "name": "Download Image 4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1168,
+        8176
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Extract Row Data').item.json.img5 }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "image5"
+            }
+          }
+        }
+      },
+      "id": "8d870c81-31c6-466f-80a6-2838c9b80ac1",
+      "name": "Download Image 5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -976,
+        8192
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk",
+          "mode": "list",
+          "cachedResultName": "content topic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3360,
+        8032
+      ],
+      "id": "fa4d0c50-7973-4900-8def-591fee500331",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ddQK7dFNi8D7VNgu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional social media copywriter.\n\nGenerate an Instagram carousel caption using the topic provided.\n\nRules:\n- 3 to 5 short lines\n- Clear, engaging, and informative\n- First line must hook attention\n- Use simple language\n- No emojis\n- No markdown\n- End with a soft call-to-action\n- Add 3 to 5 relevant hashtags at the end\n- Hashtags must be on the last line only\n\nTopic:\n{{ $json.topic }}\nReturn only the caption text.\n"
+      },
+      "id": "27a51197-e816-4398-9e18-40f1ebab2b5d",
+      "name": "Generate Instagram Caption",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -2496,
+        7968
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional linkedin content writer.\n\nWrite a caption for an linkedin carousel with 5 slides.\n\nRules:\n- 3 to 5 short lines\n- First line must hook attention\n- Mention that the carousel has multiple slides\n- No emojis\n- No markdown\n- End with a soft call-to-action\n- Add 3 to 5 relevant hashtags at the end\n\nTopic:\n{{ $json.topic }}\n\nReturn ONLY the caption text.\n"
+      },
+      "id": "3bb97464-b642-4c93-9439-9be80e0229da",
+      "name": "Generate LinkedIn Caption",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -2144,
+        7968
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": true
+        }
+      },
+      "id": "cc60b7f3-ecb7-4198-b327-4a736c27b7cc",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2912,
+        8032
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk",
+          "mode": "list",
+          "cachedResultName": "content topic",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1107561380,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E5M27AiSpLmosvB_TA3zXYwCawM9H-gJRiEF4iTvifk/edit#gid=1107561380"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3136,
+        8032
+      ],
+      "id": "8c14c8c1-a05a-4e96-b938-18fdd20707e7",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ddQK7dFNi8D7VNgu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2448,
+        8176
+      ],
+      "id": "213204cf-7da9-43fc-b809-b731aaf30eac",
+      "name": "OpenAI Chat Model10",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2144,
+        8144
+      ],
+      "id": "278f855a-adbc-4983-b4dc-f4eda8cac646",
+      "name": "OpenAI Chat Model11",
+      "credentials": {
+        "openAiApi": {
+          "id": "dhrv6gQKr5dcOfZw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -464,
+        7856
+      ],
+      "id": "a71cd898-fa8e-43fd-8fce-fe6200233e4a",
+      "name": "HTTP Request21"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -464,
+        8160
+      ],
+      "id": "298be111-bac5-4286-a391-216d1cc875b3",
+      "name": "HTTP Request22"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -336,
+        8480
+      ],
+      "id": "e454c07d-07f3-40a5-a73f-60e68462bd4f",
+      "name": "HTTP Request23"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -352,
+        8720
+      ],
+      "id": "33180299-6d79-4fb2-883b-c005e8441678",
+      "name": "HTTP Request24"
+    },
+    {
+      "parameters": {
+        "jsCode": "import cron from \"node-cron\";\nimport dotenv from \"dotenv\";\nimport { postToSocial } from \"./postToSocial.js\";\n\ndotenv.config();\n\nconsole.log(\"📅 Social Media Scheduler Started\");\n\n/**\n * Cron Expression:\n * 0 0 */7 * *  → Runs every 7 days at 12:00 AM\n */\ncron.schedule(\"0 0 */7 * *\", async () => {\n  console.log(\"⏰ Triggered 7-day scheduled job\");\n  await postToSocial();\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3856,
+        8016
+      ],
+      "id": "1c671379-6b7e-4d94-829e-0141d921f78e",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image1": {
+      "main": [
+        [
+          {
+            "node": "Edit Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image7": {
+      "main": [
+        [
+          {
+            "node": "Edit Image6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image8": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image9": {
+      "main": [
+        [
+          {
+            "node": "Edit Image8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image10": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image11": {
+      "main": [
+        [
+          {
+            "node": "Edit Image10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image12": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image13": {
+      "main": [
+        [
+          {
+            "node": "Edit Image12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Image7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Edit Image9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Edit Image11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Edit Image13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request8": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request9": {
+      "main": [
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request10": {
+      "main": [
+        [
+          {
+            "node": "AI Agent5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request13",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request14",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request11": {
+      "main": [
+        [
+          {
+            "node": "Wait10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent5": {
+      "main": [
+        [
+          {
+            "node": "Code11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent6": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent7": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent8": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent9": {
+      "main": [
+        [
+          {
+            "node": "Code10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code10": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code11": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request12": {
+      "main": [
+        [
+          {
+            "node": "AI Agent6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request13": {
+      "main": [
+        [
+          {
+            "node": "AI Agent7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request14": {
+      "main": [
+        [
+          {
+            "node": "AI Agent8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request15": {
+      "main": [
+        [
+          {
+            "node": "AI Agent9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request16": {
+      "main": [
+        [
+          {
+            "node": "Wait8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request17": {
+      "main": [
+        [
+          {
+            "node": "Wait9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request18": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request19": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code12": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait10": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait9": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request20": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent5",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent6",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent7",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model8": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent8",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model9": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent9",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Code12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Row Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Instagram Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image 1": {
+      "main": [
+        [
+          {
+            "node": "Download Image 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image 2": {
+      "main": [
+        [
+          {
+            "node": "Download Image 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image 3": {
+      "main": [
+        [
+          {
+            "node": "Download Image 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image 4": {
+      "main": [
+        [
+          {
+            "node": "Download Image 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image 5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request21",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request22",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request23",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Instagram Caption": {
+      "main": [
+        [
+          {
+            "node": "Generate LinkedIn Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate LinkedIn Caption": {
+      "main": [
+        [
+          {
+            "node": "Download Image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Extract Row Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model10": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Instagram Caption",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model11": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate LinkedIn Caption",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request21": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "0cd0829a-4625-4c43-9bbf-e3067bf412c6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8f1b09b32b5b6e4069b416ffc322ea5361f58dbbdd83ae42da52ff0e30d63723"
+  },
+  "id": "STnuv6Sr3faVIUNtP8FyZ",
+  "tags": [
+    {
+      "updatedAt": "2026-01-24T08:03:08.146Z",
+      "createdAt": "2026-01-24T08:03:08.146Z",
+      "id": "kxQ7rRSgemCNUvzw",
+      "name": "Social Media Posting"
+    }
+  ]
+}
